@@ -1,0 +1,51 @@
+name: Generate Swagger Documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  swagger-gh-pages:
+    runs-on: ubuntu-latest
+    container:
+      image: escolalms/php:7.4
+
+    steps:
+      - name: Instantiate package
+        uses: actions/checkout@v2
+
+      - name: Setup environment
+        run: cp -r env/codecov/. .
+
+      - name: add Swagger main annotaion
+        run: php -r "file_put_contents('src/EscolaLmsWebinarServiceProvider.php', str_replace('SWAGGER_VERSION', '@OA\Info(title=\"EscolaLMS\", version=\"0.0.1\")', file_get_contents('src/EscolaLmsWebinarServiceProvider.php')));"
+
+      - name: Update composer
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer update
+
+      - name: Require composer swagger package
+        run: composer require darkaonline/l5-swagger:8.1.0 zircote/swagger-php:3.3.3 swagger-api/swagger-ui:v3.52.5
+
+      - name: Discover packages
+        run: vendor/bin/testbench package:discover --ansi
+
+      - name: Generate YAML openapi
+        run: vendor/bin/openapi --format json -b env/openapi/config.php -o openapi.json ./src/ ./vendor/escolalms/auth/src/Models/
+
+      - name: Swagger ui action
+        id: swagger-ui-action
+        uses: pjoc-team/swagger-ui-action@v0.0.2
+        with:
+          dir: "./"
+          pattern: "openapi.json"
+          debug: "true"
+
+      - name: Install git
+        run: apt-get install git -y
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: swagger-ui

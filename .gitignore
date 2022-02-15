@@ -1,0 +1,8 @@
+/vendor
+.phpunit.result.cache
+composer.lock
+.idea
+openapi.json
+.env
+scorm
+.DS_Store
