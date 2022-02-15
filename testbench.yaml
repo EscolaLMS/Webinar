@@ -1,0 +1,13 @@
+env:
+  - DB_CONNECTION=pgsql
+  - DB_HOST=127.0.0.1
+  - DB_PORT=5432
+  - DB_DATABASE=default
+  - DB_USERNAME=default
+  - DB_PASSWORD=secret
+
+providers:
+  - Laravel\Passport\PassportServiceProvider
+  - Spatie\Permission\PermissionServiceProvider
+  - EscolaLms\Core\EscolaLmsServiceProvider
+  - EscolaLms\Webinar\EscolaLmsWebinarServiceProvider
