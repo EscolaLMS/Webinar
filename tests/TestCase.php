@@ -3,6 +3,7 @@
 namespace EscolaLms\Webinar\Tests;
 
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
+use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Tests\Models\Client;
 use EscolaLms\Webinar\AuthServiceProvider;
 use EscolaLms\Webinar\EscolaLmsWebinarServiceProvider;
