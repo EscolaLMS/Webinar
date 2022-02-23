@@ -24,7 +24,7 @@ class CreateWebinarAuthorsTable extends Migration
         });
 
         Schema::table('webinars', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('author_id');
+            $table->dropForeign('webinars_author_id_foreign');
             $table->dropColumn('author_id');
         });
     }
