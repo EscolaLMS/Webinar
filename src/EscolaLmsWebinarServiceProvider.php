@@ -2,6 +2,10 @@
 
 namespace EscolaLms\Webinar;
 
+use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
+use EscolaLms\Webinar\Repositories\WebinarRepository;
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use EscolaLms\Webinar\Services\WebinarService;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -9,7 +13,14 @@ use Illuminate\Support\ServiceProvider;
  */
 class EscolaLmsWebinarServiceProvider extends ServiceProvider
 {
-    public $singletons = [];
+    public const SERVICES = [
+        WebinarServiceContract::class => WebinarService::class
+    ];
+    public const REPOSITORIES = [
+        WebinarRepositoryContract::class => WebinarRepository::class,
+    ];
+
+    public $singletons = self::SERVICES + self::REPOSITORIES;
 
     public function boot()
     {
@@ -25,7 +36,7 @@ class EscolaLmsWebinarServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/config.php' => config_path('escolalms_webinar.php'),
-        ], 'escolalms_webinar.config');
+        ], 'escolalms_webinar');
     }
 
     public function register()

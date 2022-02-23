@@ -7,12 +7,13 @@ use EscolaLms\Webinar\Database\Factories\WebinarFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
 /**
  * @OA\Schema(
  *      schema="Webinar",
- *      required={"name", "status", "description", "author_id"},
+ *      required={"name", "status", "description"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
@@ -34,9 +35,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="author_id",
- *          description="author_id",
- *          type="integer"
+ *          property="duration",
+ *          description="duration",
+ *          type="string"
  *      ),
  *      @OA\Property(
  *          property="base_price",
@@ -44,13 +45,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *          type="integer"
  *      ),
  *      @OA\Property(
- *          property="finished_at",
- *          description="finished_at",
+ *          property="active_to",
+ *          description="active_to",
  *          type="datetime",
  *      ),
  *      @OA\Property(
- *          property="started_at",
- *          description="started_at",
+ *          property="active_from",
+ *          description="active_from",
  *          type="datetime"
  *      ),
  *      @OA\Property(
@@ -75,14 +76,14 @@ class Webinar extends Model
         'name',
         'status',
         'description',
-        'author_id',
-        'started_at',
-        'finished_at'
+        'duration',
+        'active_from',
+        'active_to'
     ];
 
-    public function author(): BelongsTo
+    public function authors(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsToMany(User::class, 'webinar_authors','webinar_id', 'author_id') ;
     }
 
     protected static function newFactory(): WebinarFactory

@@ -14,16 +14,14 @@ class WebinarFactory extends Factory
 
     public function definition()
     {
-        $tutor = User::role(UserRole::TUTOR)->inRandomOrder()->first();
         $now = now();
         return [
             'base_price' => $this->faker->numberBetween(1, 200),
             'name' => $this->faker->sentence(10),
             'status' => $this->faker->randomElement(WebinarStatusEnum::getValues()),
             'description' => $this->faker->sentence,
-            'author_id' => empty($tutor) ? null : $tutor->getKey(),
-            'started_at' => $now,
-            'finished_at' => (clone $now)->modify('+1 hour'),
+            'active_from' => $now,
+            'active_to' => (clone $now)->modify('+1 hour'),
         ];
     }
 }

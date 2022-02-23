@@ -21,8 +21,9 @@ class CreateWebinarsTable extends Migration
             $table->string('name', 255);
             $table->string('status')->default(WebinarStatusEnum::DRAFT);
             $table->text('description');
-            $table->dateTime('started_at')->nullable();
-            $table->dateTime('finished_at')->nullable();
+            $table->string('duration')->nullable();
+            $table->dateTime('active_from')->nullable();
+            $table->dateTime('active_to')->nullable();
             $table->timestamps();
 
             $table->foreign('author_id')->references('id')->on('users')->onDelete('SET NULL');
