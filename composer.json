@@ -10,7 +10,7 @@
     "escolalms/settings": "^0",
     "escolalms/jitsi": "^0",
     "laravel/framework": ">=8.0",
-    "escolalms/cart": "^0"
+    "escolalms/cart": "0.1.19"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0",

@@ -52,4 +52,33 @@ class WebinarApiTest extends TestCase
         $this->response = $this->json('GET','/api/admin/webinars');
         $this->response->assertUnauthorized();
     }
+
+    public function testWebinarsListForApi(): void
+    {
+        $this->response = $this->actingAs($this->user, 'api')->get('/api/webinars');
+        $this->response->assertOk();
+    }
+
+    public function testWebinarsListUnauthorizedForApi(): void
+    {
+        $this->response = $this->json('GET','/api/webinars');
+        $this->response->assertUnauthorized();
+    }
+
+    public function testWebinarsListWithFilterForApi(): void
+    {
+        $filterData = [
+            'base_price=' . $this->webinar->base_price,
+            'name=' . $this->webinar->name,
+            'status[]=' . $this->webinar->status,
+        ];
+        $this->response = $this->actingAs($this->user, 'api')->get('/api/webinars?' . implode('&', $filterData));
+        $this->response->assertOk();
+        $this->response->assertJsonFragment([
+            'id' => $this->webinar->getKey(),
+            'name' => $this->webinar->name,
+            'status' => $this->webinar->status,
+            'created_at' => $this->webinar->created_at,
+        ]);
+    }
 }
