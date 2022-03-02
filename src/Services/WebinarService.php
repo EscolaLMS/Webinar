@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Webinar\Services;
 
+use Carbon\Carbon;
+use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
 use EscolaLms\Webinar\Helpers\StrategyHelper;
@@ -10,16 +12,20 @@ use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebinarService implements WebinarServiceContract
 {
     private WebinarRepositoryContract $webinarRepositoryContract;
+    private JitsiServiceContract $jitsiServiceContract;
 
     public function __construct(
-        WebinarRepositoryContract $webinarRepositoryContract
+        WebinarRepositoryContract $webinarRepositoryContract,
+        JitsiServiceContract $jitsiServiceContract
     ) {
         $this->webinarRepositoryContract = $webinarRepositoryContract;
+        $this->jitsiServiceContract = $jitsiServiceContract;
     }
 
     public function getWebinarsList(array $search = [], bool $onlyActive = false): Builder
@@ -93,5 +99,33 @@ class WebinarService implements WebinarServiceContract
         foreach ($files as $key => $file) {
             $webinar->$key = $file->storePublicly("webinar/{$webinar->getKey()}/images");
         }
+    }
+
+    public function generateJitsi(int $webinarId): array
+    {
+        $webinar = $this->webinarRepositoryContract->find($webinarId);
+        if (!$this->canGenerateJitsi($webinar)) {
+            throw new NotFoundHttpException(__('Webinar is not available'));
+        }
+
+        return $this->jitsiServiceContract->getChannelData(
+            auth()->user(),
+            Str::studly($webinar->name)
+        );
+    }
+
+    private function canGenerateJitsi(Webinar $webinar): bool
+    {
+        $modifyTimeStrings = [
+            'seconds', 'minutes', 'hours', 'weeks', 'years'
+        ];
+        $now = now();
+        $explode = explode(' ', $webinar);
+        $count = $explode[0];
+        $string = in_array($explode[1], $modifyTimeStrings) ? $explode[1] : 'hours';
+        $dateTo = Carbon::make($webinar->active_to)->modify('+' . $count . ' ' . $string);
+
+        return $webinar->isPublished() &&
+            $now <= $dateTo;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace EscolaLms\Webinar;
 
+use EscolaLms\Jitsi\EscolaLmsJitsiServiceProvider;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use EscolaLms\Webinar\Repositories\WebinarRepository;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
@@ -43,5 +45,7 @@ class EscolaLmsWebinarServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'escolalms_webinar');
         $this->app->register(AuthServiceProvider::class);
+        $this->app->register(EscolaLmsJitsiServiceProvider::class);
+        $this->app->register(EscolaLmsSettingsServiceProvider::class);
     }
 }

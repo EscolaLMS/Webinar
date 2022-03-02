@@ -1,5 +1,6 @@
 <?php
 
+use EscolaLms\Webinar\Http\Controllers\WebinarAPIController;
 use EscolaLms\Webinar\Http\Controllers\WebinarController;
 use Illuminate\Support\Facades\Route;
 
@@ -9,5 +10,6 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 });
 
 // user endpoints
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/consultations'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/webinars'], function () {
+    Route::get('/', [WebinarAPIController::class, 'index']);
 });

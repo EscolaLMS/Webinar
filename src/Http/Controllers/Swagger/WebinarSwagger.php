@@ -12,6 +12,7 @@ interface WebinarSwagger
     /**
      * @OA\Get(
      *      path="/api/admin/webinars",
+     *      tags={"Admin Webinars"},
      *      @OA\Parameter(
      *          name="order_by",
      *          required=false,
@@ -193,7 +194,7 @@ interface WebinarSwagger
      * @OA\Get(
      *      path="/api/webinars/{id}",
      *      summary="Display the specified Webinar",
-     *      tags={"Consultations"},
+     *      tags={"Webinars"},
      *      description="Get Webinar",
      *      @OA\Parameter(
      *          name="id",

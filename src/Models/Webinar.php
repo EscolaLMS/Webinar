@@ -4,12 +4,10 @@ namespace EscolaLms\Webinar\Models;
 
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Webinar\Database\Factories\WebinarFactory;
+use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-
 
 /**
  * @OA\Schema(
@@ -85,6 +83,11 @@ class Webinar extends Model
     public function authors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'webinar_authors','webinar_id', 'author_id') ;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === WebinarStatusEnum::PUBLISHED;
     }
 
     protected static function newFactory(): WebinarFactory
