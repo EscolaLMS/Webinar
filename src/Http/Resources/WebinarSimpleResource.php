@@ -19,7 +19,6 @@ class WebinarSimpleResource extends JsonResource
             'active_to' => $this->active_to,
             'name' => $this->name,
             'base_price' => $this->base_price,
-            'author_id' => $this->author_id,
             'status' => $this->status,
             'description' => $this->description,
             'duration' => $this->duration,
