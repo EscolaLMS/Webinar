@@ -29,7 +29,7 @@ class WebinarUpdateApiTest extends TestCase
 
     public function testWebinarUpdateUnauthorized(): void
     {
-        $response = $this->json('PUT',$this->apiUrl);
+        $response = $this->json('POST',$this->apiUrl);
         $response->assertUnauthorized();
     }
 
@@ -43,7 +43,7 @@ class WebinarUpdateApiTest extends TestCase
             ['authors' => $authors]
         );
         $response = $this->actingAs($this->user, 'api')->json(
-            'PUT',
+            'POST',
             $this->apiUrl,
             $requestArray
         );
@@ -80,19 +80,10 @@ class WebinarUpdateApiTest extends TestCase
         $webinar->delete();
         $webinarUpdate = Webinar::factory()->make();
         $response = $this->actingAs($this->user, 'api')->json(
-            'PUT',
+            'POST',
             '/api/admin/webinars/' . $id,
             $webinarUpdate->toArray()
         );
         $response->assertNotFound();
-    }
-
-    public function testWebinarUpdateRequiredValidation(): void
-    {
-        $response = $this->actingAs($this->user, 'api')->json(
-            'PUT',
-            $this->apiUrl
-        );
-        $response->assertJsonValidationErrors(['name', 'status', 'description']);
     }
 }
