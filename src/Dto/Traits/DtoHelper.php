@@ -30,14 +30,18 @@ trait DtoHelper
         if (method_exists($this, 'set' . $key)) {
             return $this->{'get' . $key}();
         }
-        return $this->{lcfirst($key)} ?? null;
+        return $this->{lcfirst($key)} ?? false;
     }
 
     protected function fillInArray(array $fillables): array
     {
         $result = [];
         foreach ($fillables as $fill) {
-            $result[$fill] = $this->getterByAttribute($fill);
+            $value = $this->getterByAttribute($fill);
+            if ($value === false) {
+                continue;
+            }
+            $result[$fill] = $value;
         }
         return $result;
     }

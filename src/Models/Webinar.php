@@ -8,6 +8,7 @@ use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -88,6 +89,14 @@ class Webinar extends Model
     public function isPublished(): bool
     {
         return $this->status === WebinarStatusEnum::PUBLISHED;
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if (isset($this->attributes['image_path'])) {
+            return url(Storage::disk('public')->url($this->attributes['image_path']));
+        }
+        return null;
     }
 
     protected static function newFactory(): WebinarFactory

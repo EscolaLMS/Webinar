@@ -296,7 +296,7 @@ interface WebinarSwagger
      *          description="id of Webinar",
      *          @OA\Schema(
      *             type="integer",
-     *         ),
+     *          ),
      *          required=true,
      *          in="path"
      *      ),

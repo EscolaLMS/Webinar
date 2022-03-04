@@ -19,12 +19,12 @@ class WebinarSimpleResource extends JsonResource
             'active_to' => $this->active_to,
             'name' => $this->name,
             'base_price' => $this->base_price,
-            'author_id' => $this->author_id,
             'status' => $this->status,
             'description' => $this->description,
             'duration' => $this->duration,
             'authors' => $this->authors,
             'image_path' => $this->image_path,
+            'image_url' => $this->image_url,
         ];
         return self::apply($fields, $this);
     }
