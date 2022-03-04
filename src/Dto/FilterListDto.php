@@ -6,6 +6,7 @@ use EscolaLms\Webinar\Repositories\Criteria\WebinarSearch;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use EscolaLms\Webinar\Repositories\Criteria\WebinarTagsCriterion;
 
 class FilterListDto extends BaseDto
 {
@@ -14,6 +15,7 @@ class FilterListDto extends BaseDto
     private array $status;
     private string $dateTo;
     private string $dateFrom;
+    private array $tags;
 
     private array $criteria = [];
 
@@ -34,6 +36,9 @@ class FilterListDto extends BaseDto
         }
         if ($dto->getDateTo()) {
             $dto->addToCriteria(new DateCriterion('webinars.active_to', $dto->getDateTo(), '<='));
+        }
+        if ($dto->getTags()) {
+            $dto->addToCriteria(new WebinarTagsCriterion($dto->getTags()));
         }
         return $dto->criteria;
     }
@@ -63,6 +68,11 @@ class FilterListDto extends BaseDto
         return $this->dateTo ?? null;
     }
 
+    public function getTags(): ?array
+    {
+        return $this->tags ?? null;
+    }
+
     protected function setName(string $name): void
     {
         $this->name = $name;
@@ -86,6 +96,11 @@ class FilterListDto extends BaseDto
     protected function setDateTo(string $dateTo): void
     {
         $this->dateTo = $dateTo;
+    }
+
+    protected function setTags(array $tags): void
+    {
+        $this->tags = $tags;
     }
 
     private function addToCriteria($value): void

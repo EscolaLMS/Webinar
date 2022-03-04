@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Consultations\Tests\APIs;
 
+use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
@@ -35,12 +36,13 @@ class WebinarStoreApiTest extends TestCase
     {
         $webinar = Webinar::factory()->make()->toArray();
         $authors = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
+        $tags = ['Event', 'Webinar'];
         $requestArray = array_merge(
             $webinar,
             ['image' => UploadedFile::fake()->image('image.jpg')],
-            ['authors' => $authors]
+            ['authors' => $authors],
+            ['tags' => $tags]
         );
-
         $response = $this->actingAs($this->user, 'api')->json(
             'POST',
             $this->apiUrl,
@@ -56,6 +58,13 @@ class WebinarStoreApiTest extends TestCase
             'data',
             fn ($json) => $json
                 ->has('image_path')
+                ->has('tags', fn (AssertableJson $json) => $json->each(
+                        fn (AssertableJson $json) => $json->where('title', fn ($json) =>
+                            in_array($json, $tags)
+                        )->etc()
+                    )
+                    ->etc()
+                )
                 ->has('authors', fn (AssertableJson $json) =>
                     $json->each(fn (AssertableJson $json) =>
                         $json->where('id', fn ($json) =>
