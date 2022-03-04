@@ -27,7 +27,7 @@ trait DtoHelper
     protected function getterByAttribute(string $attribute)
     {
         $key = Str::studly($attribute);
-        if (method_exists($this, 'set' . $key)) {
+        if (method_exists($this, 'get' . $key)) {
             return $this->{'get' . $key}();
         }
         return $this->{lcfirst($key)} ?? false;

@@ -76,6 +76,7 @@ class Webinar extends Model
         'name',
         'status',
         'description',
+        'image_path',
         'duration',
         'active_from',
         'active_to'
