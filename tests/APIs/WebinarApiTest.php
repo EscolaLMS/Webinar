@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Tests\TestCase;
@@ -22,6 +23,7 @@ class WebinarApiTest extends TestCase
         $this->user->assignRole('tutor');
         $this->webinar = Webinar::factory()->create();
         $this->webinar->authors()->sync($this->user);
+        $this->webinar->tags()->save(new Tag(['title' => 'Event']));
     }
 
     public function testWebinarsList(): void
@@ -36,6 +38,7 @@ class WebinarApiTest extends TestCase
             'base_price=' . $this->webinar->base_price,
             'name=' . $this->webinar->name,
             'status[]=' . $this->webinar->status,
+            'tags[]=' . 'Event',
         ];
         $this->response = $this->actingAs($this->user, 'api')->get('/api/admin/webinars?' . implode('&', $filterData));
         $this->response->assertOk();
@@ -71,6 +74,7 @@ class WebinarApiTest extends TestCase
             'base_price=' . $this->webinar->base_price,
             'name=' . $this->webinar->name,
             'status[]=' . $this->webinar->status,
+            'tags[]=' . 'Event',
         ];
         $this->response = $this->actingAs($this->user, 'api')->get('/api/webinars?' . implode('&', $filterData));
         $this->response->assertOk();

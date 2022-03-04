@@ -25,6 +25,7 @@ class WebinarSimpleResource extends JsonResource
             'authors' => $this->authors,
             'image_path' => $this->image_path,
             'image_url' => $this->image_url,
+            'tags' => $this->tags,
         ];
         return self::apply($fields, $this);
     }

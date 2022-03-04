@@ -3,11 +3,13 @@
 namespace EscolaLms\Webinar\Models;
 
 use EscolaLms\Auth\Models\User;
+use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Factories\WebinarFactory;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -85,6 +87,11 @@ class Webinar extends Model
     public function authors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'webinar_authors','webinar_id', 'author_id') ;
+    }
+
+    public function tags(): MorphMany
+    {
+        return $this->morphMany(Tag::class, 'morphable');
     }
 
     public function isPublished(): bool

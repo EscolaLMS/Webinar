@@ -36,4 +36,9 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     {
         $this->relations['authors'] = $authors;
     }
+
+    protected function setTags(array $tags): void
+    {
+        $this->relations['tags'] = $tags;
+    }
 }
