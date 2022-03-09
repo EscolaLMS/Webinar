@@ -47,6 +47,15 @@ class WebinarShowApiTest extends TestCase
         $response->assertJsonFragment(['success' => true]);
     }
 
+    public function testConsultationShowAPI()
+    {
+        $response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/webinars/' . $this->webinar->getKey()
+        );
+        $response->assertOk();
+    }
+
     public function testWebinarShowFailed(): void
     {
         $webinar = Webinar::factory()->create();

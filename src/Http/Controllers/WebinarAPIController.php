@@ -35,6 +35,15 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
         );
     }
 
+    public function show(int $id): JsonResponse
+    {
+        $webinar = $this->webinarServiceContract->show($id);
+        return $this->sendResponseForResource(
+            WebinarSimpleResource::make($webinar),
+            __('Webinar show successfully')
+        );
+    }
+
     public function generateJitsi(int $webinarId): JsonResponse
     {
         return $this->sendResponse(

@@ -32,6 +32,15 @@ class WebinarApiTest extends TestCase
         $this->response->assertOk();
     }
 
+    public function testConsultationListAPI()
+    {
+        $response = $this->actingAs($this->user, 'api')->json(
+            'GET',
+            '/api/webinars'
+        );
+        $response->assertOk();
+    }
+
     public function testWebinarsListWithFilter(): void
     {
         $filterData = [
