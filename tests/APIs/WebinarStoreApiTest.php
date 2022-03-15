@@ -3,11 +3,14 @@
 namespace EscolaLms\Consultations\Tests\APIs;
 
 use EscolaLms\Tags\Models\Tag;
+use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
+use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class WebinarStoreApiTest extends TestCase
@@ -34,6 +37,8 @@ class WebinarStoreApiTest extends TestCase
 
     public function testWebinarStore(): void
     {
+        Event::fake([WebinarAuthorAssigned::class, WebinarAuthorUnassigned::class]);
+
         $webinar = Webinar::factory()->make()->toArray();
         $authors = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
         $tags = ['Event', 'Webinar'];
@@ -78,6 +83,9 @@ class WebinarStoreApiTest extends TestCase
             )
             ->etc()
         );
+
+        Event::assertDispatchedTimes(WebinarAuthorAssigned::class, 2);
+        Event::assertDispatchedTimes(WebinarAuthorUnassigned::class, 0);
     }
 
     public function testWebinarStoreRequiredValidation(): void

@@ -2,11 +2,14 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
+use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class WebinarUpdateApiTest extends TestCase
@@ -81,6 +84,34 @@ class WebinarUpdateApiTest extends TestCase
         )
             ->etc()
         );
+    }
+
+    public function testWebinarUpdateAuthors(): void
+    {
+        Event::fake([WebinarAuthorAssigned::class, WebinarAuthorUnassigned::class]);
+
+        $author1 = config('auth.providers.users.model')::factory()->create();
+        $author2 = config('auth.providers.users.model')::factory()->create();
+
+        $this->webinar->authors()->sync($author1->getKey());
+
+        $response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            $this->apiUrl,
+            ['authors' => [$author2->getKey()]]
+        );
+
+        $response->assertOk();
+
+        Event::assertDispatched(WebinarAuthorAssigned::class, function (WebinarAuthorAssigned $event) use ($author2){
+            $this->assertEquals($author2->getKey(), $event->getUser()->getKey());
+            return true;
+        });
+
+        Event::assertDispatched(WebinarAuthorUnassigned::class, function (WebinarAuthorUnassigned $event) use ($author1){
+            $this->assertEquals($author1->getKey(), $event->getUser()->getKey());
+            return true;
+        });
     }
 
     public function testWebinarUpdateFailed(): void
