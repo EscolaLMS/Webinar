@@ -2,6 +2,9 @@
 
 namespace EscolaLms\Webinar\Strategies\Relations;
 
+use EscolaLms\Core\Models\User;
+use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
+use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
 use EscolaLms\Webinar\Strategies\Contracts\RelationStrategyContract;
 use EscolaLms\Webinar\Models\Webinar;
 
@@ -17,6 +20,28 @@ class WebinarWithAuthorsStrategy implements RelationStrategyContract
 
     public function setRelation(): void
     {
-        $this->webinar->authors()->sync($this->data['authors']);
+        $changes = $this->webinar->authors()->sync($this->data['authors']);
+        $this->dispatchEventForAuthorsAttachedToWebinar($changes['attached']);
+        $this->dispatchEventForAuthorsDetachedFromWebinar($changes['detached']);
+    }
+
+    private function dispatchEventForAuthorsAttachedToWebinar(array $users = []): void
+    {
+        foreach ($users as $attached) {
+            $user = is_int($attached) ? User::find($attached) : $attached;
+            if ($user) {
+                event(new WebinarAuthorAssigned($user, $this->webinar));
+            }
+        }
+    }
+
+    private function dispatchEventForAuthorsDetachedFromWebinar(array $users = []): void
+    {
+        foreach ($users as $detached) {
+            $user = is_int($detached) ? User::find($detached) : $detached;
+            if ($user) {
+                event(new WebinarAuthorUnassigned($user, $this->webinar));
+            }
+        }
     }
 }
