@@ -11,7 +11,7 @@ class ListWebinarsRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows(WebinarPermissionsEnum::WEBINAR_LIST, Webinar::class);
+        return true;
     }
 
     public function rules(): array
