@@ -58,14 +58,8 @@ class WebinarApiTest extends TestCase
 
     public function testWebinarsListForApi(): void
     {
-        $this->response = $this->actingAs($this->user, 'api')->get('/api/webinars');
+        $this->response = $this->get('/api/webinars');
         $this->response->assertOk();
-    }
-
-    public function testWebinarsListUnauthorizedForApi(): void
-    {
-        $this->response = $this->json('GET','/api/webinars');
-        $this->response->assertUnauthorized();
     }
 
     public function testWebinarsListWithFilterForApi(): void

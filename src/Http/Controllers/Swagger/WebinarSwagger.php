@@ -189,46 +189,6 @@ interface WebinarSwagger
      *      )
      * )
      */
-
-    /**
-     * @OA\Get(
-     *      path="/api/webinars/{id}",
-     *      summary="Display the specified Webinar",
-     *      tags={"Webinars"},
-     *      description="Get Webinar",
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="id of Webinar",
-     *          @OA\Schema(
-     *             type="integer",
-     *         ),
-     *          required=true,
-     *          in="path"
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
-     *          @OA\Schema(
-     *              type="object",
-     *              @OA\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @OA\Property(
-     *                  property="data",
-     *                  ref="#/components/schemas/Webinar"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      )
-     * )
-     */
     public function show(int $id): JsonResponse;
 
     /**
