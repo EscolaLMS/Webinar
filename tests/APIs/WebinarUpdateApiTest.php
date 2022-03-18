@@ -107,6 +107,10 @@ class WebinarUpdateApiTest extends TestCase
 
         $this->webinar->authors()->sync($author1->getKey());
 
+        $ytLiveDtoMock = new YTLiveDtoMock();
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('updateYTStream')->once()->andReturn($ytLiveDtoMock);
+
         $response = $this->actingAs($this->user, 'api')->json(
             'POST',
             $this->apiUrl,
