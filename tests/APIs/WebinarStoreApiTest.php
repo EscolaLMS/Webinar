@@ -3,11 +3,14 @@
 namespace EscolaLms\Consultations\Tests\APIs;
 
 use EscolaLms\Tags\Models\Tag;
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
 use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
 use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
@@ -48,6 +51,10 @@ class WebinarStoreApiTest extends TestCase
             ['authors' => $authors],
             ['tags' => $tags]
         );
+        $ytLiveDtoMock = new YTLiveDtoMock();
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('generateYTStream')->once()->andReturn($ytLiveDtoMock);
+
         $response = $this->actingAs($this->user, 'api')->json(
             'POST',
             $this->apiUrl,
@@ -70,6 +77,9 @@ class WebinarStoreApiTest extends TestCase
                     )
                     ->etc()
                 )
+                ->where('yt_url', $ytLiveDtoMock->getYtUrl())
+                ->where('yt_stream_url', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamUrl())
+                ->where('yt_stream_key', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamName())
                 ->has('authors', fn (AssertableJson $json) =>
                     $json->each(fn (AssertableJson $json) =>
                         $json->where('id', fn ($json) =>

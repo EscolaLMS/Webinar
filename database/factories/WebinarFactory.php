@@ -22,6 +22,10 @@ class WebinarFactory extends Factory
             'description' => $this->faker->sentence,
             'active_from' => $now,
             'active_to' => (clone $now)->modify('+1 hour'),
+            'yt_id' => $this->faker->word,
+            'yt_url' => $this->faker->url,
+            'yt_stream_url' => $this->faker->url,
+            'yt_stream_key' => md5(microtime()),
         ];
     }
 }

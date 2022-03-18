@@ -10,6 +10,10 @@ use EscolaLms\Webinar\Helpers\StrategyHelper;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
+use EscolaLms\Youtube\Dto\YTBroadcastDto;
+use EscolaLms\Youtube\Enum\YTStatusesEnum;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -19,13 +23,16 @@ class WebinarService implements WebinarServiceContract
 {
     private WebinarRepositoryContract $webinarRepositoryContract;
     private JitsiServiceContract $jitsiServiceContract;
+    private YoutubeServiceContract $youtubeServiceContract;
 
     public function __construct(
         WebinarRepositoryContract $webinarRepositoryContract,
-        JitsiServiceContract $jitsiServiceContract
+        JitsiServiceContract $jitsiServiceContract,
+        YoutubeServiceContract $youtubeServiceContract
     ) {
         $this->webinarRepositoryContract = $webinarRepositoryContract;
         $this->jitsiServiceContract = $jitsiServiceContract;
+        $this->youtubeServiceContract = $youtubeServiceContract;
     }
 
     public function getWebinarsList(array $search = [], bool $onlyActive = false): Builder
@@ -48,6 +55,7 @@ class WebinarService implements WebinarServiceContract
             $webinar = $this->webinarRepositoryContract->create($webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
             $this->setFiles($webinar, $webinarDto->getFiles());
+            $this->setYtStream($webinar);
             $webinar->save();
             return $webinar;
         });
@@ -60,6 +68,7 @@ class WebinarService implements WebinarServiceContract
             $this->setFiles($webinar, $webinarDto->getFiles());
             $webinar = $this->webinarRepositoryContract->updateModel($webinar, $webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
+            $this->updateYtStream($webinar);
             return $webinar;
         });
     }
@@ -76,7 +85,16 @@ class WebinarService implements WebinarServiceContract
     public function delete(int $id): ?bool
     {
         return DB::transaction(function () use($id) {
-            return $this->webinarRepositoryContract->delete($id);
+            $webinar = $this->webinarRepositoryContract->find($id);
+            if (!$webinar) {
+                throw new NotFoundHttpException(__('Webinar not found'));
+            }
+            $ytId = $webinar->yt_id;
+            $deleteModel = $this->webinarRepositoryContract->deleteModel($webinar);
+            if ($deleteModel) {
+                $this->youtubeServiceContract->removeYTStream($ytId);
+            }
+            return $deleteModel;
         });
     }
 
@@ -114,18 +132,85 @@ class WebinarService implements WebinarServiceContract
         );
     }
 
+    public function setYtStream(Webinar $webinar): void
+    {
+        $this->setYtStreamToWebinar(
+            $this->youtubeServiceContract->generateYTStream($this->prepareYTDtoBroadcast($webinar)),
+            $webinar
+        );
+    }
+
+    public function updateYTStream(Webinar $webinar): void
+    {
+        $this->setYtStreamToWebinar(
+            $this->youtubeServiceContract->updateYTStream($this->prepareYTDtoBroadcast($webinar)),
+            $webinar
+        );
+    }
+
+    public function getWebinarsListForCurrentUser(array $search = []): Builder
+    {
+        $now = now()->format('Y-m-d');
+        $search['active_to'] = $search['active_to'] ?? $now;
+        $search['active_from'] = $search['active_from'] ?? $now;
+        $criteria = FilterListDto::prepareFilters($search);
+        return $this->webinarRepositoryContract->forCurrentUser(
+            $search,
+            $criteria
+        );
+    }
+
+    private function setYtStreamToWebinar(YTLiveDtoContract $ytLiveDto, Webinar $webinar): void
+    {
+        if ($ytLiveDto) {
+            $webinar->yt_id = $ytLiveDto->getId();
+            $webinar->yt_url = $ytLiveDto->getYtUrl();
+            $ytStreamDto = $ytLiveDto->getYTStreamDto();
+            if ($ytStreamDto) {
+                $webinar->yt_stream_url = $ytStreamDto->getYTCdnDto()->getStreamUrl();
+                $webinar->yt_stream_key = $ytStreamDto->getYTCdnDto()->getStreamName();
+            }
+        }
+    }
+
+    private function prepareYTDtoBroadcast(Webinar $webinar): YTBroadcastDto
+    {
+        $endDate = $this->getWebinarEndDate($webinar);
+        $data = [
+            "title" => $webinar->name,
+            "description" => $webinar->description,
+            "event_start_date_time" => Carbon::make($webinar->active_to)->format('Y-m-d H:i:s'),
+            "event_end_date_time" => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
+            "time_zone" => config('timezone', 'UTC'),
+            'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
+            "id" => $webinar->yt_id ?? null,
+        ];
+        return new YTBroadcastDto($data);
+    }
+
     private function canGenerateJitsi(Webinar $webinar): bool
+    {
+        $now = now();
+        return $webinar->isPublished() &&
+            $now <= $this->getWebinarEndDate($webinar) &&
+            $webinar->hasYT();
+    }
+
+    /**
+     * @param Webinar $webinar
+     * @return Carbon|false|null
+     */
+    private function getWebinarEndDate(Webinar $webinar): ?Carbon
     {
         $modifyTimeStrings = [
             'seconds', 'minutes', 'hours', 'weeks', 'years'
         ];
-        $now = now();
-        $explode = explode(' ', $webinar);
+        if (!$webinar->duration) {
+            return null;
+        }
+        $explode = explode(' ', $webinar->duration);
         $count = $explode[0];
         $string = in_array($explode[1], $modifyTimeStrings) ? $explode[1] : 'hours';
-        $dateTo = Carbon::make($webinar->active_to)->modify('+' . $count . ' ' . $string);
-
-        return $webinar->isPublished() &&
-            $now <= $dateTo;
+        return Carbon::make($webinar->active_to)->modify('+' . $count . ' ' . $string);
     }
 }

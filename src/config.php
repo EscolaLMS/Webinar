@@ -1,3 +1,5 @@
 <?php
 
-return [];
+return [
+    'perPage' => 15
+];

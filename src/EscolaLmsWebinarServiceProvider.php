@@ -8,6 +8,7 @@ use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use EscolaLms\Webinar\Repositories\WebinarRepository;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Services\WebinarService;
+use EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -47,5 +48,6 @@ class EscolaLmsWebinarServiceProvider extends ServiceProvider
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(EscolaLmsJitsiServiceProvider::class);
         $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        $this->app->register(EscolaLmsYoutubeServiceProvider::class);
     }
 }

@@ -36,4 +36,18 @@ class WebinarRepository extends BaseRepository implements WebinarRepositoryContr
         $webinar->save();
         return $webinar;
     }
+
+    public function deleteModel(Webinar $webinar): ?bool
+    {
+        return $webinar->delete();
+    }
+
+    public function forCurrentUser(array $search = [], array $criteria = []): Builder
+    {
+        $q = $this->allQueryBuilder($search, $criteria);
+        $q->whereHas('users', fn ($query) =>
+            $query->where(['users.id' => auth()->user()->getKey()])
+        );
+        return $q;
+    }
 }
