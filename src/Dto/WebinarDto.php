@@ -14,7 +14,7 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     protected ?string $activeFrom;
     protected ?string $duration;
     protected ?int $basePrice;
-    protected ?string $imagePath;
+    protected $imagePath = false;
 
     public function model(): Webinar
     {
@@ -27,9 +27,12 @@ class WebinarDto extends BaseDto implements ModelDtoContract
         return $filters ? array_filter($result) : $result;
     }
 
-    public function getImagePath(): string
+    public function getImagePath()
     {
-        return $this->imagePath ?? '';
+        if ($this->imagePath !== false) {
+            return $this->imagePath === null ? '' : $this->imagePath;
+        }
+        return false;
     }
 
     protected function setAuthors(array $authors): void

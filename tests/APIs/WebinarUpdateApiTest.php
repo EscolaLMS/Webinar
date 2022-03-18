@@ -2,16 +2,20 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class WebinarUpdateApiTest extends TestCase
 {
     use DatabaseTransactions;
+    use WithFaker;
     private Webinar $webinar;
     private string $apiUrl;
 
@@ -44,11 +48,16 @@ class WebinarUpdateApiTest extends TestCase
             ['authors' => $authors],
             ['tags' => $tags],
         );
+        $ytLiveDtoMock = new YTLiveDtoMock();
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('updateYTStream')->once()->andReturn($ytLiveDtoMock);
+
         $response = $this->actingAs($this->user, 'api')->json(
             'POST',
             $this->apiUrl,
             $requestArray
         );
+
         $response->assertOk();
         $response->assertJsonFragment([
             'id' => $this->webinar->getKey(),
@@ -68,6 +77,9 @@ class WebinarUpdateApiTest extends TestCase
                     )
                     ->etc()
                 )
+                ->where('yt_url', $ytLiveDtoMock->getYtUrl())
+                ->where('yt_stream_url', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamUrl())
+                ->where('yt_stream_key', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamName())
                 ->has('authors', fn (AssertableJson $json) =>
                     $json->each(fn (AssertableJson $json) =>
                         $json->where('id', fn ($json) =>
@@ -78,7 +90,7 @@ class WebinarUpdateApiTest extends TestCase
                     ->etc()
                 )
                 ->etc()
-        )
+            )
             ->etc()
         );
     }

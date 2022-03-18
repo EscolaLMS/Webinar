@@ -16,4 +16,7 @@ interface WebinarServiceContract
     public function setRelations(Webinar $webinar, array $relations = []): void;
     public function setFiles(Webinar $webinar, array $files = []): void;
     public function generateJitsi(int $webinarId): array;
+    public function setYtStream(Webinar $webinar): void;
+    public function updateYTStream(Webinar $webinar): void;
+    public function getWebinarsListForCurrentUser(array $search = []): Builder;
 }

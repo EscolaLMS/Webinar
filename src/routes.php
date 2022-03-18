@@ -12,6 +12,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function (
 
 // user endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/webinars'], function () {
+    Route::get('/me', [WebinarAPIController::class, 'forCurrentUser']);
 });
 
 

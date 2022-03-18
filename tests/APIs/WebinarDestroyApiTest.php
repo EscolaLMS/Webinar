@@ -5,6 +5,7 @@ namespace EscolaLms\Consultations\Tests\APIs;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Tests\TestCase;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class WebinarDestroyApiTest extends TestCase
@@ -39,6 +40,9 @@ class WebinarDestroyApiTest extends TestCase
     public function testWebinarDestroy(): void
     {
         $this->initVariable();
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('removeYTStream')->once()->andReturn(true);
+
         $response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
             $this->apiUrl
