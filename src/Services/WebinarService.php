@@ -126,10 +126,14 @@ class WebinarService implements WebinarServiceContract
             throw new NotFoundHttpException(__('Webinar is not available'));
         }
 
-        return $this->jitsiServiceContract->getChannelData(
+        return array_merge($this->jitsiServiceContract->getChannelData(
             auth()->user(),
             Str::studly($webinar->name)
-        );
+        ), [
+            'yt_url' => $webinar->yt_url,
+            'yt_stream_url' => $webinar->yt_stream_url,
+            'yt_stream_key' => $webinar->yt_stream_key,
+        ]);
     }
 
     public function setYtStream(Webinar $webinar): void

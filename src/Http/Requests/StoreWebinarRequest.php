@@ -23,6 +23,8 @@ class StoreWebinarRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', 'min:3'],
             'status' => ['required', 'string', Rule::in(WebinarStatusEnum::getValues())],
             'description' => ['required', 'string', 'min:3'],
+            'agenda' => ['nullable', 'string', 'min:3'],
+            'short_desc' => ['nullable', 'string', 'min:3'],
             'duration' => ['nullable', 'string', 'max:80'],
             'active_from' => ['date'],
             'active_to' => ['date', 'after_or_equal:active_from'],

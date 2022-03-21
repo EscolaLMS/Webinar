@@ -9,10 +9,13 @@ interface WebinarAPISwagger
     /**
      * @OA\Get(
      *      tags={"Webinars"},
-     *      path="/api/webinars/generate-jitsi/{webinarId}",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      path="/api/webinars/generate-jitsi/{id}",
      *      description="Generate jitsi object for approved webinar",
      *      @OA\Parameter(
-     *          name="webinarId",
+     *          name="id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -46,6 +49,18 @@ interface WebinarAPISwagger
      *          description="Bad request",
      *          @OA\MediaType(
      *              mediaType="application/json"
+     *          ),
+     *          @OA\Property(
+     *              property="data",
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/Jitsi")
+     *          ),
+     *          @OA\Schema(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
      *          )
      *      )
      *   )

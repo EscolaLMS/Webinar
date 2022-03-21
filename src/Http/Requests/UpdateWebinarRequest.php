@@ -24,6 +24,8 @@ class UpdateWebinarRequest extends FormRequest
             'status' => ['string', Rule::in(WebinarStatusEnum::getValues())],
             'description' => ['string', 'min:3'],
             'duration' => ['nullable', 'string', 'max:80'],
+            'agenda' => ['nullable', 'string', 'min:3'],
+            'short_desc' => ['nullable', 'string', 'min:3'],
             'active_from' => ['date'],
             'active_to' => ['date', 'after_or_equal:active_from'],
             'image' => ['nullable', 'file', 'image'],
