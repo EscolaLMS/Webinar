@@ -163,7 +163,35 @@ class WebinarService implements WebinarServiceContract
             $criteria
         );
     }
+  
+    public function setYtStream(Webinar $webinar): void
+    {
+        $this->setYtStreamToWebinar(
+            $this->youtubeServiceContract->generateYTStream($this->prepareYTDtoBroadcast($webinar)),
+            $webinar
+        );
+    }
 
+    public function updateYTStream(Webinar $webinar): void
+    {
+        $this->setYtStreamToWebinar(
+            $this->youtubeServiceContract->updateYTStream($this->prepareYTDtoBroadcast($webinar)),
+            $webinar
+        );
+    }
+
+    public function getWebinarsListForCurrentUser(array $search = []): Builder
+    {
+        $now = now()->format('Y-m-d');
+        $search['active_to'] = $search['active_to'] ?? $now;
+        $search['active_from'] = $search['active_from'] ?? $now;
+        $criteria = FilterListDto::prepareFilters($search);
+        return $this->webinarRepositoryContract->forCurrentUser(
+            $search,
+            $criteria
+        );
+    }
+  
     private function setYtStreamToWebinar(YTLiveDtoContract $ytLiveDto, Webinar $webinar): void
     {
         if ($ytLiveDto) {
