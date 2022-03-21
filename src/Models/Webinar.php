@@ -37,6 +37,16 @@ use Illuminate\Support\Facades\Storage;
  *          type="string"
  *      ),
  *      @OA\Property(
+ *          property="short_desc",
+ *          description="short_desc",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="agenda",
+ *          description="agenda",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="duration",
  *          description="duration",
  *          type="string"
@@ -93,6 +103,8 @@ class Webinar extends Model
         'name',
         'status',
         'description',
+        'agenda',
+        'short_desc',
         'image_path',
         'duration',
         'active_from',

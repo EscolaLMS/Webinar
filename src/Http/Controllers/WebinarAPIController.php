@@ -58,10 +58,10 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
         );
     }
 
-    public function generateJitsi(int $webinarId): JsonResponse
+    public function generateJitsi(int $id): JsonResponse
     {
         return $this->sendResponse(
-            $this->webinarServiceContract->generateJitsi($webinarId),
+            $this->webinarServiceContract->generateJitsi($id),
             __('Webinar jitsi url generated successfully')
         );
     }
