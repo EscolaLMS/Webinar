@@ -21,8 +21,7 @@ interface WebinarServiceContract
      *      schema="Jitsi",
      *      @OA\Property(
      *         property="data",
-     *         type="array",
-     *         example="Jitsi data object with iframe api doc",
+     *         type="object",
      *      ),
      *      @OA\Property(
      *         property="domain",

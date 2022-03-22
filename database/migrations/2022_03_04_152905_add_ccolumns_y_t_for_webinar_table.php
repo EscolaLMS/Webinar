@@ -11,7 +11,7 @@ class AddCcolumnsYTForWebinarTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('webinars', function (Blueprint $table) {
             $table->string('yt_id', 30)->nullable();
@@ -26,7 +26,7 @@ class AddCcolumnsYTForWebinarTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('webinars', function (Blueprint $table) {
             $table->dropColumn(['yt_url', 'yt_stream_url', 'yt_stream_key', 'yt_id']);

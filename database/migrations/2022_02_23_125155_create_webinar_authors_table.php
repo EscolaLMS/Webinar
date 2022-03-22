@@ -11,7 +11,7 @@ class CreateWebinarAuthorsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('webinar_authors', function (Blueprint $table) {
             $table->id();
@@ -34,7 +34,7 @@ class CreateWebinarAuthorsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('webinar_authors');
         Schema::table('webinars', function (Blueprint $table) {
