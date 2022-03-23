@@ -2,9 +2,12 @@
 
 namespace EscolaLms\Webinar\Services\Contracts;
 
+use EscolaLms\Auth\Models\User;
 use EscolaLms\Webinar\Dto\WebinarDto;
 use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Collection;
 
 interface WebinarServiceContract
 {
@@ -55,4 +58,6 @@ interface WebinarServiceContract
     public function setYtStream(Webinar $webinar): void;
     public function updateYTStream(Webinar $webinar): void;
     public function getWebinarsListForCurrentUser(array $search = []): Builder;
+    public function extendResponse($webinarSimpleResource, $isApi = false);
+    public function isTrainer(User $user, Webinar $webinar): bool;
 }

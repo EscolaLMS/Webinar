@@ -111,9 +111,9 @@ class Webinar extends Model
         'active_to'
     ];
 
-    public function authors(): BelongsToMany
+    public function trainers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'webinar_authors','webinar_id', 'author_id') ;
+        return $this->belongsToMany(User::class, 'webinar_trainers','webinar_id', 'trainer_id') ;
     }
 
     public function tags(): MorphMany

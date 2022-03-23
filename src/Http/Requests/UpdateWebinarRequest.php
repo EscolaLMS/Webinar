@@ -29,8 +29,8 @@ class UpdateWebinarRequest extends FormRequest
             'active_from' => ['date'],
             'active_to' => ['date', 'after_or_equal:active_from'],
             'image' => ['nullable', 'file', 'image'],
-            'authors' => ['array'],
-            'authors.*' => ['integer', 'exists:users,id'],
+            'trainers' => ['array'],
+            'trainers.*' => ['integer', 'exists:users,id'],
         ];
     }
 }
