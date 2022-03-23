@@ -6,12 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class ChangeNameColumnsInWebinarAuthorsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
         Schema::rename('webinar_authors', 'webinar_trainers');
         Schema::table('webinar_trainers', function (Blueprint $table) {
@@ -20,16 +15,10 @@ class ChangeNameColumnsInWebinarAuthorsTable extends Migration
             $table->renameColumn('author_id', 'trainer_id');
             $table->foreign('trainer_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('webinar_id')->references('id')->on('webinars')->cascadeOnDelete();
-            $table->renameIndex('webinar_authors_pkey', 'webinar_trainers_pkey');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::rename('webinar_trainers', 'webinar_authors');
         Schema::table('webinar_authors', function (Blueprint $table) {
@@ -38,7 +27,6 @@ class ChangeNameColumnsInWebinarAuthorsTable extends Migration
             $table->renameColumn('trainer_id', 'author_id');
             $table->foreign('trainer_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('webinar_id')->references('id')->on('webinars')->cascadeOnDelete();
-            $table->renameIndex('webinar_trainers_pkey', 'webinar_authors_pkey');
         });
     }
 }
