@@ -25,7 +25,7 @@ class ChangeNameColumnsInWebinarAuthorsTable extends Migration
             $table->dropForeign('webinar_trainers_trainer_id_foreign');
             $table->dropForeign('webinar_trainers_webinar_id_foreign');
             $table->renameColumn('trainer_id', 'author_id');
-            $table->foreign('trainer_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('author_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('webinar_id')->references('id')->on('webinars')->cascadeOnDelete();
         });
     }
