@@ -3,12 +3,12 @@
 namespace EscolaLms\Webinar\Strategies\Relations;
 
 use EscolaLms\Core\Models\User;
-use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
-use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
+use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
+use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
 use EscolaLms\Webinar\Strategies\Contracts\RelationStrategyContract;
 use EscolaLms\Webinar\Models\Webinar;
 
-class WebinarWithAuthorsStrategy implements RelationStrategyContract
+class WebinarWithTrainersStrategy implements RelationStrategyContract
 {
     private Webinar $webinar;
     private array $data;
@@ -20,27 +20,27 @@ class WebinarWithAuthorsStrategy implements RelationStrategyContract
 
     public function setRelation(): void
     {
-        $changes = $this->webinar->authors()->sync($this->data['authors']);
-        $this->dispatchEventForAuthorsAttachedToWebinar($changes['attached']);
-        $this->dispatchEventForAuthorsDetachedFromWebinar($changes['detached']);
+        $changes = $this->webinar->trainers()->sync($this->data['trainers']);
+        $this->dispatchEventForTrainersAttachedToWebinar($changes['attached']);
+        $this->dispatchEventForTrainersDetachedFromWebinar($changes['detached']);
     }
 
-    private function dispatchEventForAuthorsAttachedToWebinar(array $users = []): void
+    private function dispatchEventForTrainersAttachedToWebinar(array $users = []): void
     {
         foreach ($users as $attached) {
             $user = is_int($attached) ? User::find($attached) : $attached;
             if ($user) {
-                event(new WebinarAuthorAssigned($user, $this->webinar));
+                event(new WebinarTrainerAssigned($user, $this->webinar));
             }
         }
     }
 
-    private function dispatchEventForAuthorsDetachedFromWebinar(array $users = []): void
+    private function dispatchEventForTrainersDetachedFromWebinar(array $users = []): void
     {
         foreach ($users as $detached) {
             $user = is_int($detached) ? User::find($detached) : $detached;
             if ($user) {
-                event(new WebinarAuthorUnassigned($user, $this->webinar));
+                event(new WebinarTrainerUnassigned($user, $this->webinar));
             }
         }
     }
