@@ -5,8 +5,8 @@ namespace EscolaLms\Consultations\Tests\APIs;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
-use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
-use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
+use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
+use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
@@ -40,15 +40,15 @@ class WebinarStoreApiTest extends TestCase
 
     public function testWebinarStore(): void
     {
-        Event::fake([WebinarAuthorAssigned::class, WebinarAuthorUnassigned::class]);
+        Event::fake([WebinarTrainerAssigned::class, WebinarTrainerUnassigned::class]);
 
         $webinar = Webinar::factory()->make()->toArray();
-        $authors = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
+        $trainers = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
         $tags = ['Event', 'Webinar'];
         $requestArray = array_merge(
             $webinar,
             ['image' => UploadedFile::fake()->image('image.jpg')],
-            ['authors' => $authors],
+            ['trainers' => $trainers],
             ['tags' => $tags]
         );
         $ytLiveDtoMock = new YTLiveDtoMock();
@@ -80,10 +80,10 @@ class WebinarStoreApiTest extends TestCase
                 ->where('yt_url', $ytLiveDtoMock->getYtUrl())
                 ->where('yt_stream_url', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamUrl())
                 ->where('yt_stream_key', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamName())
-                ->has('authors', fn (AssertableJson $json) =>
+                ->has('trainers', fn (AssertableJson $json) =>
                     $json->each(fn (AssertableJson $json) =>
                         $json->where('id', fn ($json) =>
-                            in_array($json, $authors)
+                            in_array($json, $trainers)
                         )
                         ->etc()
                     )
@@ -94,8 +94,8 @@ class WebinarStoreApiTest extends TestCase
             ->etc()
         );
 
-        Event::assertDispatchedTimes(WebinarAuthorAssigned::class, 2);
-        Event::assertDispatchedTimes(WebinarAuthorUnassigned::class, 0);
+        Event::assertDispatchedTimes(WebinarTrainerAssigned::class, 2);
+        Event::assertDispatchedTimes(WebinarTrainerUnassigned::class, 0);
     }
 
     public function testWebinarStoreRequiredValidation(): void

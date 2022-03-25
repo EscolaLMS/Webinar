@@ -2,6 +2,6 @@
 
 namespace EscolaLms\Webinar\Events;
 
-class WebinarAuthorAssigned extends Webinar
+class WebinarTrainerUnassigned extends Webinar
 {
 }

@@ -34,7 +34,8 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
             );
 
         return $this->sendResponseForResource(
-            WebinarSimpleResource::collection($webinars), __('Webinars retrieved successfully')
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::collection($webinars)),
+            __('Webinars retrieved successfully')
         );
     }
 
@@ -43,7 +44,7 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
         $dto = new WebinarDto($storeWebinarRequest->all());
         $webinar = $this->webinarServiceContract->store($dto);
         return $this->sendResponseForResource(
-            WebinarSimpleResource::make($webinar),
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::make($webinar)),
             __('Webinar saved successfully')
         );
     }
@@ -53,7 +54,7 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
         $dto = new WebinarDto($updateWebinarRequest->all());
         $webinar = $this->webinarServiceContract->update($id, $dto);
         return $this->sendResponseForResource(
-            WebinarSimpleResource::make($webinar),
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::make($webinar)),
             __('Webinar updated successfully')
         );
     }
@@ -62,7 +63,7 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
     {
         $webinar = $this->webinarServiceContract->show($id);
         return $this->sendResponseForResource(
-            WebinarSimpleResource::make($webinar),
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::make($webinar)),
             __('Webinar updated successfully')
         );
     }

@@ -24,12 +24,10 @@ class WebinarSimpleResource extends JsonResource
             'short_desc' => $this->short_desc,
             'agenda' => $this->agenda,
             'duration' => $this->duration,
-            'authors' => $this->authors,
+            'trainers' => $this->trainers,
             'image_path' => $this->image_path,
             'image_url' => $this->image_url,
             'yt_url' => $this->yt_url,
-            'yt_stream_url' => $this->yt_stream_url,
-            'yt_stream_key' => $this->yt_stream_key,
             'tags' => $this->tags,
         ];
         return self::apply($fields, $this);

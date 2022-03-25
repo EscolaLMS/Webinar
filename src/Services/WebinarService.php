@@ -3,10 +3,12 @@
 namespace EscolaLms\Webinar\Services;
 
 use Carbon\Carbon;
+use EscolaLms\Auth\Models\User;
 use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
 use EscolaLms\Webinar\Helpers\StrategyHelper;
+use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
@@ -15,6 +17,8 @@ use EscolaLms\Youtube\Dto\YTBroadcastDto;
 use EscolaLms\Youtube\Enum\YTStatusesEnum;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -162,6 +166,26 @@ class WebinarService implements WebinarServiceContract
             $search,
             $criteria
         );
+    }
+
+    public function extendResponse($webinarSimpleResource, $isApi = false)
+    {
+        WebinarSimpleResource::extend(function (WebinarSimpleResource $webinar) use($isApi) {
+            $user = auth()->user();
+            if (($user && $this->isTrainer($user, $webinar->resource)) || !$isApi) {
+                return [
+                    'yt_stream_url' => $webinar->yt_stream_url,
+                    'yt_stream_key' => $webinar->yt_stream_key,
+                ];
+            }
+            return [];
+        });
+        return $webinarSimpleResource;
+    }
+
+    public function isTrainer(User $user, Webinar $webinar): bool
+    {
+        return $webinar->trainers()->whereTrainerId($user->getKey())->count() > 0;
     }
 
     private function setYtStreamToWebinar(YTLiveDtoContract $ytLiveDto, Webinar $webinar): void

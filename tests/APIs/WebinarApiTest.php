@@ -22,7 +22,7 @@ class WebinarApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
         $this->webinar = Webinar::factory()->create();
-        $this->webinar->authors()->sync($this->user);
+        $this->webinar->trainers()->sync($this->user);
         $this->webinar->tags()->save(new Tag(['title' => 'Event']));
     }
 

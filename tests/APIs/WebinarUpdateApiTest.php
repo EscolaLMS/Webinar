@@ -3,8 +3,8 @@
 namespace EscolaLms\Webinar\Tests\APIs;
 
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
-use EscolaLms\Webinar\Events\WebinarAuthorAssigned;
-use EscolaLms\Webinar\Events\WebinarAuthorUnassigned;
+use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
+use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
@@ -43,12 +43,12 @@ class WebinarUpdateApiTest extends TestCase
     public function testWebinarUpdate(): void
     {
         $webinarUpdate = Webinar::factory()->make()->toArray();
-        $authors = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
+        $trainers = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
         $tags = ['Event', 'Webinar'];
         $requestArray = array_merge(
             $webinarUpdate,
             ['image' => UploadedFile::fake()->image('image.jpg')],
-            ['authors' => $authors],
+            ['trainers' => $trainers],
             ['tags' => $tags],
         );
         $ytLiveDtoMock = new YTLiveDtoMock();
@@ -83,10 +83,10 @@ class WebinarUpdateApiTest extends TestCase
                 ->where('yt_url', $ytLiveDtoMock->getYtUrl())
                 ->where('yt_stream_url', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamUrl())
                 ->where('yt_stream_key', $ytLiveDtoMock->getYTStreamDto()->getYTCdnDto()->getStreamName())
-                ->has('authors', fn (AssertableJson $json) =>
+                ->has('trainers', fn (AssertableJson $json) =>
                     $json->each(fn (AssertableJson $json) =>
                         $json->where('id', fn ($json) =>
-                            in_array($json, $authors)
+                            in_array($json, $trainers)
                         )
                         ->etc()
                     )
@@ -98,14 +98,14 @@ class WebinarUpdateApiTest extends TestCase
         );
     }
 
-    public function testWebinarUpdateAuthors(): void
+    public function testWebinarUpdateTrainers(): void
     {
-        Event::fake([WebinarAuthorAssigned::class, WebinarAuthorUnassigned::class]);
+        Event::fake([WebinarTrainerAssigned::class, WebinarTrainerUnassigned::class]);
 
-        $author1 = config('auth.providers.users.model')::factory()->create();
-        $author2 = config('auth.providers.users.model')::factory()->create();
+        $trainer1 = config('auth.providers.users.model')::factory()->create();
+        $trainer2 = config('auth.providers.users.model')::factory()->create();
 
-        $this->webinar->authors()->sync($author1->getKey());
+        $this->webinar->trainers()->sync($trainer1->getKey());
 
         $ytLiveDtoMock = new YTLiveDtoMock();
         $webinarService = $this->mock(YoutubeServiceContract::class);
@@ -114,18 +114,18 @@ class WebinarUpdateApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')->json(
             'POST',
             $this->apiUrl,
-            ['authors' => [$author2->getKey()]]
+            ['trainers' => [$trainer2->getKey()]]
         );
 
         $response->assertOk();
 
-        Event::assertDispatched(WebinarAuthorAssigned::class, function (WebinarAuthorAssigned $event) use ($author2){
-            $this->assertEquals($author2->getKey(), $event->getUser()->getKey());
+        Event::assertDispatched(WebinarTrainerAssigned::class, function (WebinarTrainerAssigned $event) use ($trainer2){
+            $this->assertEquals($trainer2->getKey(), $event->getUser()->getKey());
             return true;
         });
 
-        Event::assertDispatched(WebinarAuthorUnassigned::class, function (WebinarAuthorUnassigned $event) use ($author1){
-            $this->assertEquals($author1->getKey(), $event->getUser()->getKey());
+        Event::assertDispatched(WebinarTrainerUnassigned::class, function (WebinarTrainerUnassigned $event) use ($trainer1){
+            $this->assertEquals($trainer1->getKey(), $event->getUser()->getKey());
             return true;
         });
     }

@@ -29,9 +29,9 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
                 $listWebinarsRequest->get('per_page') ??
                 config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
             );
-
         return $this->sendResponseForResource(
-            WebinarSimpleResource::collection($webinars), __('Webinars retrieved successfully')
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::collection($webinars), true),
+            __('Webinars retrieved successfully'),
         );
     }
 
@@ -39,7 +39,7 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
     {
         $webinar = $this->webinarServiceContract->show($id);
         return $this->sendResponseForResource(
-            WebinarSimpleResource::make($webinar),
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::make($webinar), true),
             __('Webinar show successfully')
         );
     }
@@ -53,8 +53,10 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
                 $listWebinarsRequest->get('per_page') ??
                 config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
             );
+
         return $this->sendResponseForResource(
-            WebinarSimpleResource::collection($webinars), __('Webinars retrieved successfully')
+            $this->webinarServiceContract->extendResponse(WebinarSimpleResource::collection($webinars), true),
+             __('Webinars retrieved successfully')
         );
     }
 

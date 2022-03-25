@@ -37,9 +37,9 @@ class WebinarDto extends BaseDto implements ModelDtoContract
         return false;
     }
 
-    protected function setAuthors(array $authors): void
+    protected function setTrainers(array $trainers): void
     {
-        $this->relations['authors'] = $authors;
+        $this->relations['trainers'] = $trainers;
     }
 
     protected function setTags(array $tags): void
