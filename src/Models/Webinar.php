@@ -2,7 +2,7 @@
 
 namespace EscolaLms\Webinar\Models;
 
-use EscolaLms\Auth\Models\User;
+use EscolaLms\Core\Models\User;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Factories\WebinarFactory;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
@@ -108,7 +108,8 @@ class Webinar extends Model
         'image_path',
         'duration',
         'active_from',
-        'active_to'
+        'active_to',
+        'reminder_status',
     ];
 
     public function trainers(): BelongsToMany

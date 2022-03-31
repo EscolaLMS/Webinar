@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests;
 
+use EscolaLms\Webinar\Providers\EventServiceProvider;
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Tests\Models\Client;
@@ -32,7 +33,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsYoutubeServiceProvider::class
+            EscolaLmsYoutubeServiceProvider::class,
+            EventServiceProvider::class,
         ];
     }
 

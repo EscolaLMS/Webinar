@@ -3,10 +3,11 @@
 namespace EscolaLms\Webinar\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Models\User;
+use EscolaLms\Core\Models\User;
 use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
+use EscolaLms\Webinar\Events\ReminderAboutTerm;
 use EscolaLms\Webinar\Helpers\StrategyHelper;
 use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
 use EscolaLms\Webinar\Models\Webinar;
@@ -17,8 +18,6 @@ use EscolaLms\Youtube\Dto\YTBroadcastDto;
 use EscolaLms\Youtube\Enum\YTStatusesEnum;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -186,6 +185,36 @@ class WebinarService implements WebinarServiceContract
     public function isTrainer(User $user, Webinar $webinar): bool
     {
         return $webinar->trainers()->whereTrainerId($user->getKey())->count() > 0;
+    }
+
+
+    public function reminderAboutWebinar(string $reminderStatus): void
+    {
+        $now = now();
+        $reminderDate = now()->modify(config('escolalms_webinar.modifier_date.' . $reminderStatus, '+1 hour'));
+        $exclusionStatuses = config('escolalms_webinar.exclusion_reminder_status.' . $reminderStatus, []);
+        $data = [
+            'date_time_to' => $reminderDate->format('Y-m-d H:i:s'),
+            'date_time_from' => $now->format('Y-m-d H:i:s'),
+            'reminder_status' => $exclusionStatuses,
+        ];
+        $incomingTerms = $this->webinarRepositoryContract->getIncomingTerm(
+            FilterListDto::prepareFilters($data)
+        );
+        foreach ($incomingTerms as $webinar) {
+            foreach ($webinar->users as $user) {
+                event(new ReminderAboutTerm(
+                    $user,
+                    $webinar,
+                    $reminderStatus
+                ));
+            }
+        }
+    }
+
+    public function setReminderStatus(Webinar $webinar, string $status): void
+    {
+        $this->webinarRepositoryContract->updateModel($webinar, ['reminder_status' => $status]);
     }
 
     private function setYtStreamToWebinar(YTLiveDtoContract $ytLiveDto, Webinar $webinar): void

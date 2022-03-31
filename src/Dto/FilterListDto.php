@@ -2,6 +2,9 @@
 
 namespace EscolaLms\Webinar\Dto;
 
+use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
+use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Repositories\Criteria\WebinarSearch;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
@@ -13,8 +16,11 @@ class FilterListDto extends BaseDto
     private string $name;
     private int $basePrice;
     private array $status;
+    private array $reminderStatus;
     private string $dateTo;
     private string $dateFrom;
+    private string $dateTimeTo;
+    private string $dateTimeFrom;
     private array $tags;
 
     private array $criteria = [];
@@ -26,21 +32,35 @@ class FilterListDto extends BaseDto
             $dto->addToCriteria(new WebinarSearch($dto->getName()));
         }
         if ($dto->getBasePrice()) {
-            $dto->addToCriteria(new EqualCriterion('webinars.base_price', $dto->getBasePrice()));
+            $dto->addToCriteria(new EqualCriterion($dto->model()->getTable() . '.base_price', $dto->getBasePrice()));
         }
         if ($dto->getStatus()) {
-            $dto->addToCriteria(new InCriterion('webinars.status', $dto->getStatus()));
+            $dto->addToCriteria(new InCriterion($dto->model()->getTable() . '.status', $dto->getStatus()));
         }
         if ($dto->getDateFrom()) {
-            $dto->addToCriteria(new DateCriterion('webinars.active_from', $dto->getDateFrom(), '>='));
+            $dto->addToCriteria(new DateCriterion($dto->model()->getTable() . '.active_from', $dto->getDateFrom(), '>='));
         }
         if ($dto->getDateTo()) {
-            $dto->addToCriteria(new DateCriterion('webinars.active_to', $dto->getDateTo(), '<='));
+            $dto->addToCriteria(new DateCriterion($dto->model()->getTable() . '.active_to', $dto->getDateTo(), '<='));
+        }
+        if ($dto->getDateTimeFrom()) {
+            $dto->addToCriteria(new WhereCriterion($dto->model()->getTable() . '.active_from', $dto->getDateTimeFrom(), '>='));
+        }
+        if ($dto->getDateTimeTo()) {
+            $dto->addToCriteria(new WhereCriterion($dto->model()->getTable() . '.active_to', $dto->getDateTimeTo(), '<='));
         }
         if ($dto->getTags()) {
             $dto->addToCriteria(new WebinarTagsCriterion($dto->getTags()));
         }
+        if ($dto->getReminderStatus()) {
+            $dto->addToCriteria(new WhereNotInOrIsNullCriterion($dto->model()->getTable() . '.reminder_status', $dto->getReminderStatus()));
+        }
         return $dto->criteria;
+    }
+
+    public function model(): Webinar
+    {
+        return Webinar::newModelInstance();
     }
 
     public function getName(): ?string
@@ -73,6 +93,26 @@ class FilterListDto extends BaseDto
         return $this->tags ?? null;
     }
 
+    public function getDateTimeFrom(): ?string
+    {
+        return $this->dateTimeFrom ?? null;
+    }
+
+    public function getDateTimeTo(): ?string
+    {
+        return $this->dateTimeTo ?? null;
+    }
+
+    public function getReminderStatus(): ?array
+    {
+        return $this->reminderStatus ?? null;
+    }
+
+    protected function setReminderStatus(array $reminderStatus): void
+    {
+        $this->reminderStatus = $reminderStatus;
+    }
+
     protected function setName(string $name): void
     {
         $this->name = $name;
@@ -101,6 +141,16 @@ class FilterListDto extends BaseDto
     protected function setTags(array $tags): void
     {
         $this->tags = $tags;
+    }
+
+    protected function setDateTimeFrom(string $dateTimeFrom): void
+    {
+        $this->dateTimeFrom = $dateTimeFrom;
+    }
+
+    protected function setDateTimeTo(string $dateTimeTo): void
+    {
+        $this->dateTimeTo = $dateTimeTo;
     }
 
     private function addToCriteria($value): void
