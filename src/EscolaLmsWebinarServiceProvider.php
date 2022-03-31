@@ -2,13 +2,17 @@
 
 namespace EscolaLms\Webinar;
 
+use EscolaLms\Webinar\Providers\EventServiceProvider;
 use EscolaLms\Jitsi\EscolaLmsJitsiServiceProvider;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use EscolaLms\Webinar\Enum\WebinarTermReminderStatusEnum;
+use EscolaLms\Webinar\Jobs\ReminderAboutWebinarJob;
 use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use EscolaLms\Webinar\Repositories\WebinarRepository;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Services\WebinarService;
 use EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -40,6 +44,16 @@ class EscolaLmsWebinarServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config.php' => config_path('escolalms_webinar.php'),
         ], 'escolalms_webinar');
+
+        $this->app->booted(function () {
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->job(
+                new ReminderAboutWebinarJob(WebinarTermReminderStatusEnum::REMINDED_HOUR_BEFORE)
+            )->everyFiveMinutes();
+            $schedule->job(
+                new ReminderAboutWebinarJob(WebinarTermReminderStatusEnum::REMINDED_DAY_BEFORE)
+            )->everySixHours();
+        });
     }
 
     public function register()
@@ -49,5 +63,6 @@ class EscolaLmsWebinarServiceProvider extends ServiceProvider
         $this->app->register(EscolaLmsJitsiServiceProvider::class);
         $this->app->register(EscolaLmsSettingsServiceProvider::class);
         $this->app->register(EscolaLmsYoutubeServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
     }
 }

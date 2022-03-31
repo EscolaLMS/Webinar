@@ -60,4 +60,5 @@ interface WebinarServiceContract
     public function getWebinarsListForCurrentUser(array $search = []): Builder;
     public function extendResponse($webinarSimpleResource, $isApi = false);
     public function isTrainer(User $user, Webinar $webinar): bool;
+    public function reminderAboutWebinar(string $reminderStatus): void;
 }

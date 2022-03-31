@@ -6,6 +6,7 @@ use EscolaLms\Core\Repositories\BaseRepository;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class WebinarRepository extends BaseRepository implements WebinarRepositoryContract
 {
@@ -49,5 +50,14 @@ class WebinarRepository extends BaseRepository implements WebinarRepositoryContr
             $query->where(['users.id' => auth()->user()->getKey()])
         );
         return $q;
+    }
+
+    public function getIncomingTerm(array $criteria = []): Collection
+    {
+        $query = $this->model->newQuery();
+        if ($criteria) {
+            $query = $this->applyCriteria($query, $criteria);
+        }
+        return $query->get();
     }
 }
