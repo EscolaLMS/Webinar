@@ -21,7 +21,7 @@ class WebinarsTermsSeeder extends Seeder
 
         Webinar::factory(5, [
             'status' => WebinarStatusEnum::PUBLISHED,
-            'active_to' => now()->modify('+1 hour'),
+            'active_to' => now(),
             'duration' => '1 hours'
         ])
             ->create()
