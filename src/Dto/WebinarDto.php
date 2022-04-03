@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Dto;
 
+use Carbon\Carbon;
 use EscolaLms\Webinar\Dto\Contracts\ModelDtoContract;
 use EscolaLms\Webinar\Models\Webinar;
 
@@ -45,5 +46,15 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     protected function setTags(array $tags): void
     {
         $this->relations['tags'] = $tags;
+    }
+
+    protected function setActiveTo(?string $activeTo): void
+    {
+        $this->activeTo = Carbon::make($activeTo);
+    }
+
+    protected function setActiveFrom(?string $activeFrom): void
+    {
+        $this->activeFrom = Carbon::make($activeFrom);
     }
 }
