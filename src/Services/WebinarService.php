@@ -42,8 +42,8 @@ class WebinarService implements WebinarServiceContract
     {
         if ($onlyActive) {
             $now = now()->format('Y-m-d');
-            $search['active_to'] = $search['active_to'] ?? $now;
-            $search['active_from'] = $search['active_from'] ?? $now;
+            $search['active_to'] = isset($search['active_to']) ? Carbon::make($search['active_to'])->format('Y-m-d') : $now;
+            $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from'])->format('Y-m-d') : $now;
         }
         $criteria = FilterListDto::prepareFilters($search);
         return $this->webinarRepositoryContract->allQueryBuilder(
@@ -125,7 +125,7 @@ class WebinarService implements WebinarServiceContract
     public function generateJitsi(int $webinarId): array
     {
         $webinar = $this->webinarRepositoryContract->find($webinarId);
-        if (!$this->canGenerateJitsi($webinar)) {
+        if (!$webinar || !$this->canGenerateJitsi($webinar)) {
             throw new NotFoundHttpException(__('Webinar is not available'));
         }
 
@@ -158,8 +158,8 @@ class WebinarService implements WebinarServiceContract
     public function getWebinarsListForCurrentUser(array $search = []): Builder
     {
         $now = now()->format('Y-m-d');
-        $search['active_to'] = $search['active_to'] ?? $now;
-        $search['active_from'] = $search['active_from'] ?? $now;
+        $search['active_to'] = isset($search['active_to']) ? Carbon::make($search['active_to'])->format('Y-m-d') : $now;
+        $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from']) : $now;
         $criteria = FilterListDto::prepareFilters($search);
         return $this->webinarRepositoryContract->forCurrentUser(
             $search,
@@ -194,8 +194,8 @@ class WebinarService implements WebinarServiceContract
         $reminderDate = now()->modify(config('escolalms_webinar.modifier_date.' . $reminderStatus, '+1 hour'));
         $exclusionStatuses = config('escolalms_webinar.exclusion_reminder_status.' . $reminderStatus, []);
         $data = [
-            'date_time_to' => $reminderDate->format('Y-m-d H:i:s'),
-            'date_time_from' => $now->format('Y-m-d H:i:s'),
+            'date_time_to' => $reminderDate,
+            'date_time_from' => $now,
             'reminder_status' => $exclusionStatuses,
         ];
         $incomingTerms = $this->webinarRepositoryContract->getIncomingTerm(

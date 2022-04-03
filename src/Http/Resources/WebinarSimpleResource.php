@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Http\Resources;
 
+use Carbon\Carbon;
 use EscolaLms\Auth\Traits\ResourceExtandable;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,8 +16,8 @@ class WebinarSimpleResource extends JsonResource
             'id' => $this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'active_from' => $this->active_from,
-            'active_to' => $this->active_to,
+            'active_from' => Carbon::make($this->active_from),
+            'active_to' => Carbon::make($this->active_to),
             'name' => $this->name,
             'base_price' => $this->base_price,
             'status' => $this->status,
