@@ -175,9 +175,16 @@ class WebinarService implements WebinarServiceContract
                 return [
                     'yt_stream_url' => $webinar->yt_stream_url,
                     'yt_stream_key' => $webinar->yt_stream_key,
+                    'in_coming' => $this->inComing($webinar->resource),
+                    'is_ended' => $this->isEnded($webinar->resource),
+                    'is_started' => $this->isStarted($webinar->resource),
                 ];
             }
-            return [];
+            return [
+                'in_coming' => $this->inComing($webinar->resource),
+                'is_ended' => $this->isEnded($webinar->resource),
+                'is_started' => $this->isStarted($webinar->resource),
+            ];
         });
         return $webinarSimpleResource;
     }
@@ -217,6 +224,24 @@ class WebinarService implements WebinarServiceContract
         $this->webinarRepositoryContract->updateModel($webinar, ['reminder_status' => $status]);
     }
 
+    private function isStarted(Webinar $webinar): bool
+    {
+        return $this->canGenerateJitsi($webinar);
+    }
+
+    private function isEnded(Webinar $webinar): bool
+    {
+        $now = now();
+        $endDate = $this->getWebinarEndDate($webinar);
+        return $endDate instanceof Carbon ? $endDate->getTimestamp() >= $now->getTimestamp() : false;
+    }
+
+    private function inComing(Webinar $webinar): bool
+    {
+        $now = now();
+        return $webinar->active_to ? Carbon::make($webinar->active_to)->getTimestamp() >= $now->getTimestamp() : false;
+    }
+
     private function setYtStreamToWebinar(YTLiveDtoContract $ytLiveDto, Webinar $webinar): void
     {
         if ($ytLiveDto) {
@@ -248,8 +273,10 @@ class WebinarService implements WebinarServiceContract
     private function canGenerateJitsi(Webinar $webinar): bool
     {
         $now = now();
+        $endDate = $this->getWebinarEndDate($webinar);
         return $webinar->isPublished() &&
-            $now <= $this->getWebinarEndDate($webinar) &&
+            $endDate &&
+            $now->getTimestamp() <= $endDate->getTimestamp() &&
             $webinar->hasYT();
     }
 
@@ -260,14 +287,15 @@ class WebinarService implements WebinarServiceContract
     private function getWebinarEndDate(Webinar $webinar): ?Carbon
     {
         $modifyTimeStrings = [
-            'seconds', 'minutes', 'hours', 'weeks', 'years'
+            'seconds', 'second', 'minutes', 'minute', 'hours', 'hour', 'weeks', 'week', 'years', 'year'
         ];
         if (!$webinar->duration) {
             return null;
         }
         $explode = explode(' ', $webinar->duration);
-        $count = $explode[0];
-        $string = in_array($explode[1], $modifyTimeStrings) ? $explode[1] : 'hours';
+        $count = $explode[0] ?? 0;
+        $string = $explode[1] ?? 'hours';
+        $string = in_array($string, $modifyTimeStrings) ? $string : 'hours';
         return Carbon::make($webinar->active_to)->modify('+' . $count . ' ' . $string);
     }
 }

@@ -82,7 +82,7 @@ class WebinarGenerateJitsiTest extends TestCase
     {
         $this->webinar = Webinar::factory([
             'status' => WebinarStatusEnum::PUBLISHED,
-            'active_to' => now()->modify('-1 hour'),
+            'active_to' => now()->modify('-2 hour')->format("Y-m-d\TH:i:s.000000\Z"),
             'duration' => '1 hours'
         ])->create();
         $response = $this->actingAs($this->user, 'api')->json(
