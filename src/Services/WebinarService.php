@@ -233,7 +233,7 @@ class WebinarService implements WebinarServiceContract
     {
         $now = now();
         $endDate = $this->getWebinarEndDate($webinar);
-        return $endDate instanceof Carbon ? $endDate->getTimestamp() >= $now->getTimestamp() : false;
+        return $endDate instanceof Carbon ? $endDate->getTimestamp() <= $now->getTimestamp() : false;
     }
 
     private function inComing(Webinar $webinar): bool
