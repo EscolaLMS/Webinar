@@ -49,7 +49,7 @@ class WebinarScheduleTest extends TestCase
     public function testReminderAboutWebinarBeforeHour()
     {
         $this->webinar = Webinar::factory()->create();
-        $this->user->webinars()->sync([$this->webinar->getKey()]);
+        $this->webinar->users()->sync([$this->user->getKey()]);
         $this->assertTrue($this->webinar->reminder_status === null);
         $job = new ReminderAboutWebinarJob(WebinarTermReminderStatusEnum::REMINDED_HOUR_BEFORE);
         $job->handle();

@@ -5,6 +5,7 @@ namespace EscolaLms\Webinar\Dto;
 use Carbon\Carbon;
 use EscolaLms\Webinar\Dto\Contracts\ModelDtoContract;
 use EscolaLms\Webinar\Models\Webinar;
+use Illuminate\Http\UploadedFile;
 
 class WebinarDto extends BaseDto implements ModelDtoContract
 {
@@ -36,6 +37,11 @@ class WebinarDto extends BaseDto implements ModelDtoContract
             return $this->imagePath === null ? '' : $this->imagePath;
         }
         return false;
+    }
+
+    protected function setImage(UploadedFile $file): void
+    {
+        $this->files['image_path'] = $file;
     }
 
     protected function setTrainers(array $trainers): void

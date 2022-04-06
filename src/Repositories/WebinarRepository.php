@@ -46,9 +46,14 @@ class WebinarRepository extends BaseRepository implements WebinarRepositoryContr
     public function forCurrentUser(array $search = [], array $criteria = []): Builder
     {
         $q = $this->allQueryBuilder($search, $criteria);
-        $q->whereHas('users', fn ($query) =>
-            $query->where(['users.id' => auth()->user()->getKey()])
-        );
+        $q->orWhere(function (Builder $query) {
+            $query->orWhereHas('users', fn ($query) =>
+                $query->where(['users.id' => auth()->user()->getKey()])
+            );
+            $query->orWhereHas('trainers', fn ($query) =>
+                $query->where(['users.id' => auth()->user()->getKey()])
+            );
+        });
         return $q;
     }
 

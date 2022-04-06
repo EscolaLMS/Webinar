@@ -5,6 +5,7 @@ namespace EscolaLms\Webinar\Tests\APIs;
 use EscolaLms\Webinar\Models\User;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
@@ -29,8 +30,13 @@ class WebinarListForUserTest extends TestCase
 
     private function initVariable(): void
     {
-        $this->webinars = Webinar::factory(3)->create();
-        $this->user->webinars()->sync($this->webinars->pluck('id')->toArray());
+        $student = User::factory()->create();
+        $student->guard_name = 'api';
+        $student->assignRole('student');
+        $this->webinars = Webinar::factory(3)->create()->each(function (Webinar $webinar) use ($student) {
+            $webinar->users()->sync([$student->getKey()]);
+            $webinar->trainers()->sync([$this->user->getKey()]);
+        });
     }
 
     public function testWebinarListForUser(): void
@@ -44,6 +50,9 @@ class WebinarListForUserTest extends TestCase
                     $json->where('id', fn ($json) =>
                         in_array($json, $consArray)
                     )
+                    ->has('in_coming')
+                    ->has('is_ended')
+                    ->has('is_started')
                     ->etc()
                 )
                 ->etc()
