@@ -129,6 +129,7 @@ class WebinarService implements WebinarServiceContract
             throw new NotFoundHttpException(__('Webinar is not available'));
         }
         $isModerator = false;
+        $configOverwrite = [];
         if ($this->isTrainer(auth()->user(), $webinar)) {
             $configOverwrite = [
                 "disableModeratorIndicator" => true,
