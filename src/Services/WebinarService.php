@@ -128,10 +128,20 @@ class WebinarService implements WebinarServiceContract
         if (!$webinar || !$this->canGenerateJitsi($webinar)) {
             throw new NotFoundHttpException(__('Webinar is not available'));
         }
-
+        $isModerator = false;
+        if ($this->isTrainer(auth()->user(), $webinar)) {
+            $configOverwrite = [
+                "disableModeratorIndicator" => true,
+                "startScreenSharing" => false,
+                "enableEmailInStats" => false,
+            ];
+            $isModerator = true;
+        }
         return array_merge($this->jitsiServiceContract->getChannelData(
             auth()->user(),
-            Str::studly($webinar->name)
+            Str::studly($webinar->name),
+            $isModerator,
+            $configOverwrite
         ), [
             'yt_url' => $webinar->yt_url,
             'yt_stream_url' => $webinar->yt_stream_url,
@@ -296,6 +306,6 @@ class WebinarService implements WebinarServiceContract
         $count = $explode[0] ?? 0;
         $string = $explode[1] ?? 'hours';
         $string = in_array($string, $modifyTimeStrings) ? $string : 'hours';
-        return Carbon::make($webinar->active_to)->modify('+' . $count . ' ' . $string);
+        return Carbon::make($webinar->active_to)->modify('+' . ((int)$count) . ' ' . $string);
     }
 }
