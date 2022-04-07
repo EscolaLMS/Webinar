@@ -2,8 +2,6 @@
 
 namespace EscolaLms\Consultations\Tests\APIs;
 
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
 use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
 use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
