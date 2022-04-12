@@ -73,7 +73,7 @@ class WebinarStoreApiTest extends TestCase
             'data',
             fn ($json) => $json
                 ->where('image_path', fn ($json) => (bool)preg_match('/^.*'.$image->hashName().'$/', $json, $output))
-                ->where('logotype_path', fn ($json) => (bool)preg_match('/^.*'.$image->hashName().'$/', $json, $output))
+                ->where('logotype_path', fn ($json) => (bool)preg_match('/^.*'.$logotype->hashName().'$/', $json, $output))
                 ->has('tags', fn (AssertableJson $json) => $json->each(
                         fn (AssertableJson $json) => $json->where('title', fn ($json) =>
                             in_array($json, $tags)
