@@ -67,6 +67,26 @@ use Illuminate\Support\Facades\Storage;
  *          type="datetime"
  *      ),
  *      @OA\Property(
+ *          property="image_path",
+ *          description="image_path",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="image_url",
+ *          description="image_url",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="logotype_path",
+ *          description="logotype_path",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="logotype_url",
+ *          description="logotype_url",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
  *          property="created_at",
  *          description="created_at",
  *          type="datetime",
@@ -130,7 +150,21 @@ class Webinar extends Model
     public function getImageUrlAttribute(): string
     {
         if ($this->attributes['image_path'] ?? null) {
-            return url(Storage::url($this->attributes['image_path']));
+            $imagePath = Storage::url(trim($this->attributes['image_path'], '/'));
+            return preg_match('/^(http|https):.*$/', $imagePath, $oa) ?
+                $imagePath :
+                url($imagePath);
+        }
+        return '';
+    }
+
+    public function getLogotypeUrlAttribute(): string
+    {
+        if ($this->attributes['logotype_path'] ?? null) {
+            $logotype = Storage::url(trim($this->attributes['logotype_path'], '/'));
+            return preg_match('/^(http|https):.*$/', $logotype, $oa) ?
+                $logotype :
+                url($logotype);
         }
         return '';
     }

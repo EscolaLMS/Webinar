@@ -44,10 +44,12 @@ class WebinarStoreApiTest extends TestCase
         $trainers = config('auth.providers.users.model')::factory(2)->create()->pluck('id')->toArray();
         $tags = ['Event', 'Webinar'];
         $image = UploadedFile::fake()->image('image.jpg');
+        $logotype = UploadedFile::fake()->image('image.jpg');
 
         $requestArray = array_merge(
             $webinar,
             ['image' => $image],
+            ['logotype' => $logotype],
             ['trainers' => $trainers],
             ['tags' => $tags]
         );
@@ -71,6 +73,7 @@ class WebinarStoreApiTest extends TestCase
             'data',
             fn ($json) => $json
                 ->where('image_path', fn ($json) => (bool)preg_match('/^.*'.$image->hashName().'$/', $json, $output))
+                ->where('logotype_path', fn ($json) => (bool)preg_match('/^.*'.$logotype->hashName().'$/', $json, $output))
                 ->has('tags', fn (AssertableJson $json) => $json->each(
                         fn (AssertableJson $json) => $json->where('title', fn ($json) =>
                             in_array($json, $tags)
