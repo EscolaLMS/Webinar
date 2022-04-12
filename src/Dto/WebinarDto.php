@@ -19,6 +19,7 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     protected ?string $duration;
     protected ?int $basePrice;
     protected $imagePath = false;
+    protected $logotypePath = false;
 
     public function model(): Webinar
     {
@@ -39,9 +40,22 @@ class WebinarDto extends BaseDto implements ModelDtoContract
         return false;
     }
 
+    public function getLogotypePath()
+    {
+        if ($this->logotypePath !== false) {
+            return $this->logotypePath === null ? '' : $this->logotypePath;
+        }
+        return false;
+    }
+
     protected function setImage(UploadedFile $file): void
     {
         $this->files['image_path'] = $file;
+    }
+
+    protected function setLogotype(UploadedFile $logotype): void
+    {
+        $this->files['logotype_path'] = $logotype;
     }
 
     protected function setTrainers(array $trainers): void

@@ -28,6 +28,8 @@ class WebinarSimpleResource extends JsonResource
             'trainers' => $this->trainers,
             'image_path' => $this->image_path,
             'image_url' => $this->image_url,
+            'logotype_path' => $this->logotype_path,
+            'logotype_url' => $this->logotype_url,
             'yt_url' => $this->yt_url,
             'tags' => $this->tags,
         ];

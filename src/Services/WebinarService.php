@@ -129,20 +129,29 @@ class WebinarService implements WebinarServiceContract
             throw new NotFoundHttpException(__('Webinar is not available'));
         }
         $isModerator = false;
-        $configOverwrite = [];
+        $configInterface = [];
+        $configOverwrite = [
+            'disableModeratorIndicator' => true,
+            'startScreenSharing' => false,
+            'enableEmailInStats' => false,
+        ];
         if ($this->isTrainer(auth()->user(), $webinar)) {
-            $configOverwrite = [
-                "disableModeratorIndicator" => true,
-                "startScreenSharing" => false,
-                "enableEmailInStats" => false,
-            ];
+            $configOverwrite['disableModeratorIndicator'] = false;
             $isModerator = true;
+        }
+        if ($webinar->logotype) {
+            $configInterface = [
+                'DEFAULT_LOGO_URL' => $webinar->logotype_url,
+                'DEFAULT_WELCOME_PAGE_LOGO_URL' => $webinar->logotype_url,
+                'HIDE_INVITE_MORE_HEADER' => true
+            ];
         }
         return array_merge($this->jitsiServiceContract->getChannelData(
             auth()->user(),
             Str::studly($webinar->name),
             $isModerator,
-            $configOverwrite
+            $configOverwrite,
+            $configInterface
         ), [
             'yt_url' => $webinar->yt_url,
             'yt_stream_url' => $webinar->yt_stream_url,
