@@ -546,6 +546,22 @@
                         "description": "active_from",
                         "type": "datetime"
                     },
+                    "image_path": {
+                        "description": "image_path",
+                        "type": "string"
+                    },
+                    "image_url": {
+                        "description": "image_url",
+                        "type": "string"
+                    },
+                    "logotype_path": {
+                        "description": "logotype_path",
+                        "type": "string"
+                    },
+                    "logotype_url": {
+                        "description": "logotype_url",
+                        "type": "string"
+                    },
                     "created_at": {
                         "description": "created_at",
                         "type": "datetime"
