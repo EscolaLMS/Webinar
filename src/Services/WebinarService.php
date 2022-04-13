@@ -139,7 +139,7 @@ class WebinarService implements WebinarServiceContract
             $configOverwrite['disableModeratorIndicator'] = false;
             $isModerator = true;
         }
-        if ($webinar->logotype) {
+        if ($webinar->logotype_path) {
             $configInterface = [
                 'DEFAULT_LOGO_URL' => $webinar->logotype_url,
                 'DEFAULT_WELCOME_PAGE_LOGO_URL' => $webinar->logotype_url,
