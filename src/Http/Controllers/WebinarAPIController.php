@@ -67,4 +67,9 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
             __('Webinar jitsi url generated successfully')
         );
     }
+
+    public function startLiveStream(int $id)
+    {
+        dd($id);
+    }
 }
