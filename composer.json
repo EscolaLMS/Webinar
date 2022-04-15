@@ -2,18 +2,6 @@
   "name": "escolalms/webinar",
   "description": "Escola Headless LMS Webinar",
   "type": "package",
-  "repositories": [
-    {
-      "type": "path",
-      "name": "escolalms/youtube",
-      "url": "../youtube",
-      "options": {
-        "versions": {
-          "escolalms/youtube": "0.0.6"
-        }
-      }
-    }
-  ],
   "require": {
     "php": ">=7.4",
     "davidbadura/faker-markdown-generator": "^1.1",
