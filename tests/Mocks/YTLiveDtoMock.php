@@ -8,6 +8,7 @@ use EscolaLms\Youtube\Dto\Contracts\YTStreamDtoContract;
 class YTLiveDtoMock extends MockTest implements YTLiveDtoContract
 {
     private string $ytUrl;
+    private bool $ytAutostartStatus;
     private string $id;
 
     public function __construct()
@@ -30,6 +31,11 @@ class YTLiveDtoMock extends MockTest implements YTLiveDtoContract
     public function getYTStreamDto(): ?YTStreamDtoContract
     {
         return new YTStreamDtoMock();
+    }
+
+    public function getYtAutostartStatus(): bool
+    {
+        return false;
     }
 
 }

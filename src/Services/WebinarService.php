@@ -244,6 +244,13 @@ class WebinarService implements WebinarServiceContract
         $this->webinarRepositoryContract->updateModel($webinar, ['reminder_status' => $status]);
     }
 
+    public function setStatusInLiveStreamInYt(int $webinarId, string $broadcastStatus): void
+    {
+        $webinar = $this->webinarRepositoryContract->find($webinarId);
+        $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
+        $this->youtubeServiceContract->setStatusInLiveStream($ytBroadcastDto, $broadcastStatus);
+    }
+
     private function isStarted(Webinar $webinar): bool
     {
         return $this->canGenerateJitsi($webinar);
@@ -267,6 +274,7 @@ class WebinarService implements WebinarServiceContract
         if ($ytLiveDto) {
             $webinar->yt_id = $ytLiveDto->getId();
             $webinar->yt_url = $ytLiveDto->getYtUrl();
+            $webinar->yt_autostart_status = $ytLiveDto->getYtAutostartStatus();
             $ytStreamDto = $ytLiveDto->getYTStreamDto();
             if ($ytStreamDto) {
                 $webinar->yt_stream_url = $ytStreamDto->getYTCdnDto()->getStreamUrl();
@@ -286,6 +294,7 @@ class WebinarService implements WebinarServiceContract
             "time_zone" => config('timezone', 'UTC'),
             'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
             "id" => $webinar->yt_id ?? null,
+            "autostart_status" => $webinar->yt_autostart_status ?? false,
         ];
         return new YTBroadcastDto($data);
     }

@@ -67,4 +67,20 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
             __('Webinar jitsi url generated successfully')
         );
     }
+
+    public function startLiveStream(int $id): void
+    {
+        /**
+         * @param string second param "testing" | "live" | "complete"
+         */
+        $this->webinarServiceContract->setStatusInLiveStreamInYt($id, 'live');
+    }
+
+    public function stopLiveStream(int $id): void
+    {
+        /**
+         * @param string second param "testing" | "live" | "complete"
+         */
+        $this->webinarServiceContract->setStatusInLiveStreamInYt($id, 'complete');
+    }
 }
