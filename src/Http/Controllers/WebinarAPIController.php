@@ -68,8 +68,19 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
         );
     }
 
-    public function startLiveStream(int $id)
+    public function startLiveStream(int $id): void
     {
-        dd($id);
+        /**
+         * @param string second param "testing" | "live" | "complete"
+         */
+        $this->webinarServiceContract->setStatusInLiveStreamInYt($id, 'live');
+    }
+
+    public function stopLiveStream(int $id): void
+    {
+        /**
+         * @param string second param "testing" | "live" | "complete"
+         */
+        $this->webinarServiceContract->setStatusInLiveStreamInYt($id, 'complete');
     }
 }

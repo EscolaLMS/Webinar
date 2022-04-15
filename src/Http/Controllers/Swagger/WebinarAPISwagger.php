@@ -306,4 +306,25 @@ interface WebinarAPISwagger
      * )
      */
     public function forCurrentUser(ListWebinarsRequest $listWebinarsRequest): JsonResponse;
+
+    /**
+     * @OA\Get(
+     *      path="/api/webinars/start-live-stream/{id}",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      summary="Start live stream in yt.",
+     *      tags={"Webinars"},
+     *      description="Start live stream in yt. Endpoint void",
+     *      @OA\Parameter(
+     *          name="id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer",
+     *          ),
+     *      ),
+     * )
+     */
+    public function startLiveStream(int $id): void;
 }

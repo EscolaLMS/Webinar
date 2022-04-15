@@ -15,6 +15,7 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/webinars'], functio
     Route::get('/me', [WebinarAPIController::class, 'forCurrentUser']);
     Route::get('/generate-jitsi/{id}', [WebinarAPIController::class, 'generateJitsi']);
     Route::get('/start-live-stream/{id}', [WebinarAPIController::class, 'startLiveStream']);
+    Route::get('/stop-live-stream/{id}', [WebinarAPIController::class, 'stopLiveStream']);
 });
 
 
