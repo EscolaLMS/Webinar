@@ -33,4 +33,9 @@ class YTLiveDtoMock extends MockTest implements YTLiveDtoContract
         return new YTStreamDtoMock();
     }
 
+    public function getYtAutostartStatus(): bool
+    {
+        return false;
+    }
+
 }
