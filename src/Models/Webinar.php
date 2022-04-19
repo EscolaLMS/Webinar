@@ -6,6 +6,7 @@ use EscolaLms\Core\Models\User;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Factories\WebinarFactory;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -177,7 +178,12 @@ class Webinar extends Model
 
     public function hasYT(): bool
     {
-        return $this->yt_url && $this->yt_stream_url && $this->yt_stream_key;
+        $ytBroadcastDto = $this->prepareYTDtoBroadcast($this);
+        $youtubeServiceContract = app(YoutubeServiceContract::class);
+        return $this->yt_url &&
+            $this->yt_stream_url &&
+            $this->yt_stream_key &&
+            $youtubeServiceContract->getYtLiveStream($ytBroadcastDto)->count() > 0;
     }
 
     public function users(): BelongsToMany

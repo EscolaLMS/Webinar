@@ -71,7 +71,9 @@ class WebinarService implements WebinarServiceContract
             $this->setFiles($webinar, $webinarDto->getFiles());
             $webinar = $this->webinarRepositoryContract->updateModel($webinar, $webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
-            $this->updateYtStream($webinar);
+            if ($webinar->hasYT()) {
+                $this->updateYtStream($webinar);
+            }
             return $webinar;
         });
     }
@@ -93,8 +95,9 @@ class WebinarService implements WebinarServiceContract
                 throw new NotFoundHttpException(__('Webinar not found'));
             }
             $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
+            $hasYt = $webinar->hasYT();
             $deleteModel = $this->webinarRepositoryContract->deleteModel($webinar);
-            if ($deleteModel) {
+            if ($deleteModel && $hasYt) {
                 $this->youtubeServiceContract->removeYTStream($ytBroadcastDto);
             }
             return $deleteModel;
