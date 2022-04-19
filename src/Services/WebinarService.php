@@ -258,14 +258,14 @@ class WebinarService implements WebinarServiceContract
     {
         $endDate = $this->getWebinarEndDate($webinar);
         $data = [
-            "title" => $webinar->name,
-            "description" => $webinar->description,
-            "event_start_date_time" => Carbon::make($webinar->active_to)->format('Y-m-d H:i:s'),
-            "event_end_date_time" => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
-            "time_zone" => config('timezone', 'UTC'),
+            'title' => $webinar->name,
+            'description' => $webinar->description,
+            'event_start_date_time' => $webinar->active_to ? Carbon::make($webinar->active_to)->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s'),
+            'event_end_date_time' => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
+            'time_zone' => config('timezone', 'UTC'),
             'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
-            "id" => $webinar->yt_id ?? null,
-            "autostart_status" => $webinar->yt_autostart_status ?? false,
+            'id' => $webinar->yt_id ?? null,
+            'autostart_status' => $webinar->yt_autostart_status ?? false,
         ];
         return new YTBroadcastDto($data);
     }
