@@ -62,8 +62,7 @@
                                 "finished_at",
                                 "started_at",
                                 "created_at",
-                                "name",
-                                "base_price"
+                                "name"
                             ]
                         }
                     },
@@ -106,15 +105,6 @@
                         "required": false,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "base_price",
-                        "in": "query",
-                        "description": "Webinar base_price >= ",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
                         }
                     },
                     {
@@ -185,8 +175,7 @@
                                 "finished_at",
                                 "started_at",
                                 "created_at",
-                                "name",
-                                "base_price"
+                                "name"
                             ]
                         }
                     },
@@ -229,15 +218,6 @@
                         "required": false,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "base_price",
-                        "in": "query",
-                        "description": "Webinar base_price >= ",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
                         }
                     },
                     {
@@ -315,8 +295,7 @@
                                 "finished_at",
                                 "started_at",
                                 "created_at",
-                                "name",
-                                "base_price"
+                                "name"
                             ]
                         }
                     },
@@ -359,15 +338,6 @@
                         "required": false,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "base_price",
-                        "in": "query",
-                        "description": "Webinar base_price >= ",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
                         }
                     },
                     {
@@ -566,10 +536,6 @@
                     "duration": {
                         "description": "duration",
                         "type": "string"
-                    },
-                    "base_price": {
-                        "description": "base_price",
-                        "type": "integer"
                     },
                     "active_to": {
                         "description": "active_to",
