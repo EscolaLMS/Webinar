@@ -54,11 +54,6 @@ use Illuminate\Support\Facades\Storage;
  *          type="string"
  *      ),
  *      @OA\Property(
- *          property="base_price",
- *          description="base_price",
- *          type="integer"
- *      ),
- *      @OA\Property(
  *          property="active_to",
  *          description="active_to",
  *          type="datetime",
@@ -121,7 +116,6 @@ class Webinar extends Model
     use HasFactory;
 
     protected $fillable = [
-        'base_price',
         'name',
         'status',
         'description',
@@ -193,9 +187,9 @@ class Webinar extends Model
         return $this->belongsToMany(User::class, 'webinar_user');
     }
 
-    public function getBuyablePrice(?array $options = null): int
+    public function getDuration(): string
     {
-        return $this->base_price ?? 0;
+        return $this->duration ?? '';
     }
 
     protected static function newFactory(): WebinarFactory

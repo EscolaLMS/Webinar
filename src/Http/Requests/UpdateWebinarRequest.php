@@ -19,7 +19,6 @@ class UpdateWebinarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'base_price' => ['integer'],
             'name' => ['string', 'max:255', 'min:3'],
             'status' => ['string', Rule::in(WebinarStatusEnum::getValues())],
             'description' => ['string', 'min:3'],

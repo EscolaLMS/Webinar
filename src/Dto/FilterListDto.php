@@ -14,7 +14,6 @@ use EscolaLms\Webinar\Repositories\Criteria\WebinarTagsCriterion;
 class FilterListDto extends BaseDto
 {
     private string $name;
-    private int $basePrice;
     private array $status;
     private array $reminderStatus;
     private string $dateTo;
@@ -30,9 +29,6 @@ class FilterListDto extends BaseDto
         $dto = new self($search);
         if ($dto->getName()) {
             $dto->addToCriteria(new WebinarSearch($dto->getName()));
-        }
-        if ($dto->getBasePrice()) {
-            $dto->addToCriteria(new EqualCriterion($dto->model()->getTable() . '.base_price', $dto->getBasePrice()));
         }
         if ($dto->getStatus()) {
             $dto->addToCriteria(new InCriterion($dto->model()->getTable() . '.status', $dto->getStatus()));
@@ -66,11 +62,6 @@ class FilterListDto extends BaseDto
     public function getName(): ?string
     {
         return $this->name ?? null;
-    }
-
-    public function getBasePrice(): ?int
-    {
-        return $this->basePrice ?? null;
     }
 
     public function getStatus(): ?array
@@ -116,11 +107,6 @@ class FilterListDto extends BaseDto
     protected function setName(string $name): void
     {
         $this->name = $name;
-    }
-
-    protected function setBasePrice(int $basePrice): void
-    {
-        $this->basePrice = $basePrice;
     }
 
     protected function setStatus(array $status): void

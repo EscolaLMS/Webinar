@@ -19,7 +19,7 @@ interface WebinarSwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *              enum={"finished_at", "started_at", "created_at", "name", "base_price"}
+     *              enum={"finished_at", "started_at", "created_at", "name"}
      *          ),
      *      ),
      *      @OA\Parameter(
@@ -58,15 +58,6 @@ interface WebinarSwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *          ),
-     *      ),
-     *      @OA\Parameter(
-     *          name="base_price",
-     *          description="Webinar base_price >= ",
-     *          required=false,
-     *          in="query",
-     *          @OA\Schema(
-     *              type="integer",
      *          ),
      *      ),
      *      @OA\Parameter(
