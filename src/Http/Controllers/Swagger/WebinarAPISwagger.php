@@ -324,6 +324,13 @@ interface WebinarAPISwagger
      *              type="integer",
      *          ),
      *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          ),
+     *      )
      * )
      */
     public function startLiveStream(int $id): void;
