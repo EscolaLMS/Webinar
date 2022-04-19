@@ -92,10 +92,10 @@ class WebinarService implements WebinarServiceContract
             if (!$webinar) {
                 throw new NotFoundHttpException(__('Webinar not found'));
             }
-            $ytId = $webinar->yt_id;
+            $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
             $deleteModel = $this->webinarRepositoryContract->deleteModel($webinar);
             if ($deleteModel) {
-                $this->youtubeServiceContract->removeYTStream($ytId);
+                $this->youtubeServiceContract->removeYTStream($ytBroadcastDto);
             }
             return $deleteModel;
         });
