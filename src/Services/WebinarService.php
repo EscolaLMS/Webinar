@@ -71,7 +71,9 @@ class WebinarService implements WebinarServiceContract
             $this->setFiles($webinar, $webinarDto->getFiles());
             $webinar = $this->webinarRepositoryContract->updateModel($webinar, $webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
-            $this->updateYtStream($webinar);
+            if ($webinar->hasYT()) {
+                $this->updateYtStream($webinar);
+            }
             return $webinar;
         });
     }
@@ -93,8 +95,9 @@ class WebinarService implements WebinarServiceContract
                 throw new NotFoundHttpException(__('Webinar not found'));
             }
             $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
+            $hasYt = $webinar->hasYT();
             $deleteModel = $this->webinarRepositoryContract->deleteModel($webinar);
-            if ($deleteModel) {
+            if ($deleteModel && $hasYt) {
                 $this->youtubeServiceContract->removeYTStream($ytBroadcastDto);
             }
             return $deleteModel;
@@ -251,6 +254,22 @@ class WebinarService implements WebinarServiceContract
         $this->youtubeServiceContract->setStatusInLiveStream($ytBroadcastDto, $broadcastStatus);
     }
 
+    public function prepareYTDtoBroadcast(Webinar $webinar): YTBroadcastDto
+    {
+        $endDate = $this->getWebinarEndDate($webinar);
+        $data = [
+            "title" => $webinar->name,
+            "description" => $webinar->description,
+            "event_start_date_time" => Carbon::make($webinar->active_to)->format('Y-m-d H:i:s'),
+            "event_end_date_time" => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
+            "time_zone" => config('timezone', 'UTC'),
+            'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
+            "id" => $webinar->yt_id ?? null,
+            "autostart_status" => $webinar->yt_autostart_status ?? false,
+        ];
+        return new YTBroadcastDto($data);
+    }
+
     private function isStarted(Webinar $webinar): bool
     {
         return $this->canGenerateJitsi($webinar);
@@ -281,22 +300,6 @@ class WebinarService implements WebinarServiceContract
                 $webinar->yt_stream_key = $ytStreamDto->getYTCdnDto()->getStreamName();
             }
         }
-    }
-
-    private function prepareYTDtoBroadcast(Webinar $webinar): YTBroadcastDto
-    {
-        $endDate = $this->getWebinarEndDate($webinar);
-        $data = [
-            "title" => $webinar->name,
-            "description" => $webinar->description,
-            "event_start_date_time" => Carbon::make($webinar->active_to)->format('Y-m-d H:i:s'),
-            "event_end_date_time" => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
-            "time_zone" => config('timezone', 'UTC'),
-            'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
-            "id" => $webinar->yt_id ?? null,
-            "autostart_status" => $webinar->yt_autostart_status ?? false,
-        ];
-        return new YTBroadcastDto($data);
     }
 
     private function canGenerateJitsi(Webinar $webinar): bool

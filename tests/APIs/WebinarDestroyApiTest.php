@@ -41,7 +41,7 @@ class WebinarDestroyApiTest extends TestCase
     {
         $this->initVariable();
         $webinarService = $this->mock(YoutubeServiceContract::class);
-        $webinarService->shouldReceive('removeYTStream')->once()->andReturn(true);
+        $webinarService->shouldReceive('getYtLiveStream')->once()->andReturn(collect());
 
         $response = $this->actingAs($this->user, 'api')->json(
             'DELETE',

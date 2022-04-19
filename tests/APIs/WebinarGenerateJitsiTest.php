@@ -6,6 +6,7 @@ use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Tests\TestCase;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -34,6 +35,8 @@ class WebinarGenerateJitsiTest extends TestCase
 
     public function testGenerateJitsiWithWebinar(): void
     {
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('getYtLiveStream')->once()->andReturn(collect(['s']));
         $this->webinar = Webinar::factory([
             'status' => WebinarStatusEnum::PUBLISHED,
             'active_to' => now()->modify('+1 hour'),
