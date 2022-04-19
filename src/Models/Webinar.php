@@ -6,6 +6,7 @@ use EscolaLms\Core\Models\User;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Factories\WebinarFactory;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -178,8 +179,9 @@ class Webinar extends Model
 
     public function hasYT(): bool
     {
-        $ytBroadcastDto = $this->prepareYTDtoBroadcast($this);
         $youtubeServiceContract = app(YoutubeServiceContract::class);
+        $webinarServiceContract = app(WebinarServiceContract::class);
+        $ytBroadcastDto = $webinarServiceContract->prepareYTDtoBroadcast($this);
         return $this->yt_url &&
             $this->yt_stream_url &&
             $this->yt_stream_key &&

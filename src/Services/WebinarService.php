@@ -254,6 +254,22 @@ class WebinarService implements WebinarServiceContract
         $this->youtubeServiceContract->setStatusInLiveStream($ytBroadcastDto, $broadcastStatus);
     }
 
+    public function prepareYTDtoBroadcast(Webinar $webinar): YTBroadcastDto
+    {
+        $endDate = $this->getWebinarEndDate($webinar);
+        $data = [
+            "title" => $webinar->name,
+            "description" => $webinar->description,
+            "event_start_date_time" => Carbon::make($webinar->active_to)->format('Y-m-d H:i:s'),
+            "event_end_date_time" => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
+            "time_zone" => config('timezone', 'UTC'),
+            'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
+            "id" => $webinar->yt_id ?? null,
+            "autostart_status" => $webinar->yt_autostart_status ?? false,
+        ];
+        return new YTBroadcastDto($data);
+    }
+
     private function isStarted(Webinar $webinar): bool
     {
         return $this->canGenerateJitsi($webinar);
@@ -284,22 +300,6 @@ class WebinarService implements WebinarServiceContract
                 $webinar->yt_stream_key = $ytStreamDto->getYTCdnDto()->getStreamName();
             }
         }
-    }
-
-    private function prepareYTDtoBroadcast(Webinar $webinar): YTBroadcastDto
-    {
-        $endDate = $this->getWebinarEndDate($webinar);
-        $data = [
-            "title" => $webinar->name,
-            "description" => $webinar->description,
-            "event_start_date_time" => Carbon::make($webinar->active_to)->format('Y-m-d H:i:s'),
-            "event_end_date_time" => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
-            "time_zone" => config('timezone', 'UTC'),
-            'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
-            "id" => $webinar->yt_id ?? null,
-            "autostart_status" => $webinar->yt_autostart_status ?? false,
-        ];
-        return new YTBroadcastDto($data);
     }
 
     private function canGenerateJitsi(Webinar $webinar): bool
