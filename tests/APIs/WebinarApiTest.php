@@ -39,7 +39,6 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithFilter(): void
     {
         $filterData = [
-            'base_price=' . $this->webinar->base_price,
             'name=' . $this->webinar->name,
             'status[]=' . $this->webinar->status,
             'tags[]=' . 'Event',
@@ -71,7 +70,6 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithFilterForApi(): void
     {
         $filterData = [
-            'base_price=' . $this->webinar->base_price,
             'name=' . $this->webinar->name,
             'status[]=' . $this->webinar->status,
             'tags[]=' . 'Event',

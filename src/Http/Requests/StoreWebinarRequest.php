@@ -19,7 +19,6 @@ class StoreWebinarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'base_price' => ['integer'],
             'name' => ['required', 'string', 'max:255', 'min:3'],
             'status' => ['required', 'string', Rule::in(WebinarStatusEnum::getValues())],
             'description' => ['required', 'string', 'min:3'],
