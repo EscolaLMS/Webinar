@@ -44,16 +44,6 @@ class EscolaLmsWebinarServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config.php' => config_path('escolalms_webinar.php'),
         ], 'escolalms_webinar');
-
-        $this->app->booted(function () {
-            $schedule = $this->app->make(Schedule::class);
-            $schedule->job(
-                new ReminderAboutWebinarJob(WebinarTermReminderStatusEnum::REMINDED_HOUR_BEFORE)
-            )->everyFiveMinutes();
-            $schedule->job(
-                new ReminderAboutWebinarJob(WebinarTermReminderStatusEnum::REMINDED_DAY_BEFORE)
-            )->everySixHours();
-        });
     }
 
     public function register()
