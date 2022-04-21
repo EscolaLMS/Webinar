@@ -3,8 +3,6 @@
 namespace EscolaLms\Webinar\Database\Seeders;
 
 use EscolaLms\Auth\Models\User;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Models\WebinarUserPivot;
 use Illuminate\Database\Seeder;
