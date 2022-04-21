@@ -4,7 +4,6 @@ namespace EscolaLms\Webinar\Database\Seeders;
 
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Models\WebinarUserPivot;
 use Illuminate\Database\Seeder;
 
 class WebinarsSeeder extends Seeder
@@ -20,10 +19,7 @@ class WebinarsSeeder extends Seeder
         Webinar::factory(10)
             ->create()
             ->each(fn (Webinar $webinar) =>
-                WebinarUserPivot::factory(3, [
-                    'webinar_id' => $webinar->getKey(),
-                    'user_id' => $users->random(1)->first(),
-                ])->create()
+                $webinar->users()->sync($users->pluck('id')->toArray())
             );
     }
 }
