@@ -270,6 +270,19 @@ class WebinarService implements WebinarServiceContract
         return new YTBroadcastDto($data);
     }
 
+    public function hasYT(Webinar $webinar): bool
+    {
+        try {
+            $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
+            return $this->youtubeServiceContract->getYtLiveStream($ytBroadcastDto)->count() > 0 &&
+                $webinar->yt_url &&
+                $webinar->yt_stream_url &&
+                $webinar->yt_stream_key;
+        } catch (\Exception $ex) {
+            return false;
+        }
+    }
+
     private function isStarted(Webinar $webinar): bool
     {
         return $this->canGenerateJitsi($webinar);
