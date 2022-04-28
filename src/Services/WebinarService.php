@@ -16,6 +16,7 @@ use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
 use EscolaLms\Youtube\Dto\YTBroadcastDto;
 use EscolaLms\Youtube\Enum\YTStatusesEnum;
+use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -279,7 +280,7 @@ class WebinarService implements WebinarServiceContract
                 $webinar->yt_stream_url &&
                 $webinar->yt_stream_key;
         } catch (\Exception $ex) {
-            return false;
+            throw new YtAuthenticateException();
         }
     }
 

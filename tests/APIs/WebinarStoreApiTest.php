@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Consultations\Tests\APIs;
 
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
 use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
 use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
@@ -55,8 +56,9 @@ class WebinarStoreApiTest extends TestCase
         );
 
         $ytLiveDtoMock = new YTLiveDtoMock();
-        $webinarService = $this->mock(YoutubeServiceContract::class);
-        $webinarService->shouldReceive('generateYTStream')->once()->andReturn($ytLiveDtoMock);
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('generateYTStream')->once()->andReturn($ytLiveDtoMock);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 
         $response = $this->actingAs($this->user, 'api')->json(
             'POST',

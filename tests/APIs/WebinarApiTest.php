@@ -5,7 +5,9 @@ namespace EscolaLms\Webinar\Tests\APIs;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Tests\TestCase;
+use EscolaLms\Youtube\Services\Contracts\AuthServiceContract;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Storage;
@@ -38,6 +40,8 @@ class WebinarApiTest extends TestCase
 
     public function testWebinarsListWithFilter(): void
     {
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $filterData = [
             'name=' . $this->webinar->name,
             'status[]=' . $this->webinar->status,
@@ -69,6 +73,8 @@ class WebinarApiTest extends TestCase
 
     public function testWebinarsListWithFilterForApi(): void
     {
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $filterData = [
             'name=' . $this->webinar->name,
             'status[]=' . $this->webinar->status,
@@ -82,5 +88,15 @@ class WebinarApiTest extends TestCase
             'status' => $this->webinar->status,
             'created_at' => $this->webinar->created_at,
         ]);
+    }
+
+
+    public function testYtUnAuthorizedException(): void
+    {
+        $authServiceContractMock = $this->mock(AuthServiceContract::class);
+        $authServiceContractMock->shouldReceive('setAccessToken')->zeroOrMoreTimes()->andReturn(false);
+        $this->response = $this->actingAs($this->user, 'api')->get('/api/webinars');
+        $this->response->assertStatus(400);
+        $this->response->assertJsonFragment(['code' => 400,]);
     }
 }
