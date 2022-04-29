@@ -2,9 +2,11 @@
 
 namespace EscolaLms\Consultations\Tests\APIs;
 
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class WebinarShowApiTest extends TestCase
@@ -33,6 +35,8 @@ class WebinarShowApiTest extends TestCase
 
     public function testWebinarShow(): void
     {
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $response = $this->actingAs($this->user, 'api')->json(
             'GET',
             $this->apiUrl
@@ -49,6 +53,8 @@ class WebinarShowApiTest extends TestCase
 
     public function testConsultationShowAPI()
     {
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/webinars/' . $this->webinar->getKey()

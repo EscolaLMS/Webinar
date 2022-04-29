@@ -173,13 +173,8 @@ class Webinar extends Model
 
     public function hasYT(): bool
     {
-        $youtubeServiceContract = app(YoutubeServiceContract::class);
         $webinarServiceContract = app(WebinarServiceContract::class);
-        $ytBroadcastDto = $webinarServiceContract->prepareYTDtoBroadcast($this);
-        return $this->yt_url &&
-            $this->yt_stream_url &&
-            $this->yt_stream_key &&
-            $youtubeServiceContract->getYtLiveStream($ytBroadcastDto)->count() > 0;
+        return $webinarServiceContract->hasYT($this);
     }
 
     public function users(): BelongsToMany

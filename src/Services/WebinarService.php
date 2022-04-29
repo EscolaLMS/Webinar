@@ -16,6 +16,7 @@ use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
 use EscolaLms\Youtube\Dto\YTBroadcastDto;
 use EscolaLms\Youtube\Enum\YTStatusesEnum;
+use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -268,6 +269,19 @@ class WebinarService implements WebinarServiceContract
             'autostart_status' => $webinar->yt_autostart_status ?? false,
         ];
         return new YTBroadcastDto($data);
+    }
+
+    public function hasYT(Webinar $webinar): bool
+    {
+        try {
+            $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
+            return $this->youtubeServiceContract->getYtLiveStream($ytBroadcastDto)->count() > 0 &&
+                $webinar->yt_url &&
+                $webinar->yt_stream_url &&
+                $webinar->yt_stream_key;
+        } catch (\Exception $ex) {
+            throw new YtAuthenticateException();
+        }
     }
 
     private function isStarted(Webinar $webinar): bool

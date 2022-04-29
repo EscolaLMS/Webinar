@@ -18,6 +18,7 @@ interface WebinarServiceContract
     public function delete(int $id): ?bool;
     public function setRelations(Webinar $webinar, array $relations = []): void;
     public function setFiles(Webinar $webinar, array $files = []): void;
+    public function hasYT(Webinar $webinar): bool;
 
     /**
      * @OA\Schema(
