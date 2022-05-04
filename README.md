@@ -52,15 +52,15 @@ Test details [![codecov](https://codecov.io/gh/EscolaLMS/Webinar/branch/main/gra
 
 **Left menu**
 
-![Menu](docs/webinars/menu.png "Menu")
+![Menu](docs/menu.png "Menu")
 
 **List of webinars**
 
-![List of webinars](docs/webinars/list.png "List of webinars")
+![List of webinars](docs/list.png "List of webinars")
 
 **Creating/editing webinar**
 
-![Creating/editing webinars](docs/webinars/new_webinar.png "Creating/editing webinars")
+![Creating/editing webinars](docs/new_webinar.png "Creating or editing webinars")
 
 ### Front Application
 
