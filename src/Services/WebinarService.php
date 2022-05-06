@@ -195,20 +195,19 @@ class WebinarService implements WebinarServiceContract
     {
         WebinarSimpleResource::extend(function (WebinarSimpleResource $webinar) use($isApi) {
             $user = auth()->user();
+            $extendedArray = [];
             if (($user && $this->isTrainer($user, $webinar->resource)) || !$isApi) {
-                return [
-                    'yt_stream_url' => $webinar->yt_stream_url,
-                    'yt_stream_key' => $webinar->yt_stream_key,
-                    'in_coming' => $this->inComing($webinar->resource),
-                    'is_ended' => $this->isEnded($webinar->resource),
-                    'is_started' => $this->isStarted($webinar->resource),
-                ];
+                $extendedArray = $webinar->hasYT() ?
+                    [
+                        'yt_stream_url' => $webinar->yt_stream_url,
+                        'yt_stream_key' => $webinar->yt_stream_key,
+                    ] : [];
             }
-            return [
+            return array_merge($extendedArray, [
                 'in_coming' => $this->inComing($webinar->resource),
                 'is_ended' => $this->isEnded($webinar->resource),
                 'is_started' => $this->isStarted($webinar->resource),
-            ];
+            ]);
         });
         return $webinarSimpleResource;
     }
