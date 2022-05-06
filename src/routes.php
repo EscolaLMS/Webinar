@@ -2,16 +2,16 @@
 
 use EscolaLms\Webinar\Http\Controllers\WebinarAPIController;
 use EscolaLms\Webinar\Http\Controllers\WebinarController;
-use EscolaLms\Core\Http\Facades\Route;
+use Illuminate\Support\Facades\Route;
 
 // admin endpoints
-Route::group(['middleware' => Route::apply(['auth:api']), 'prefix' => 'api/admin'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
     Route::post('webinars/{id}', [WebinarController::class, 'update']);
     Route::resource('webinars', WebinarController::class);
 });
 
 // user endpoints
-Route::group(['middleware' => Route::apply(['auth:api']), 'prefix' => 'api/webinars'], function () {
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/webinars'], function () {
     Route::get('/me', [WebinarAPIController::class, 'forCurrentUser']);
     Route::get('/generate-jitsi/{id}', [WebinarAPIController::class, 'generateJitsi']);
     Route::get('/start-live-stream/{id}', [WebinarAPIController::class, 'startLiveStream']);
