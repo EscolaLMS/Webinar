@@ -279,6 +279,7 @@ class WebinarService implements WebinarServiceContract
                 $webinar->yt_stream_url &&
                 $webinar->yt_stream_key;
         } catch (\Exception $ex) {
+            $this->youtubeServiceContract->dispatchYtError();
             throw new YtAuthenticateException();
         }
     }

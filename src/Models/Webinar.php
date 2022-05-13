@@ -2,12 +2,10 @@
 
 namespace EscolaLms\Webinar\Models;
 
-use EscolaLms\Core\Models\User;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Factories\WebinarFactory;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

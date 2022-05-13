@@ -2,11 +2,11 @@
 
 namespace EscolaLms\Webinar\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
+use EscolaLms\Auth\Models\User as AuthUser;
 use EscolaLms\Webinar\Models\Traits\HasWebinars;
 use EscolaLms\Webinar\Tests\Database\Factories\UserFactory;
 
-class User extends Coreuser
+class User extends AuthUser
 {
     use HasWebinars;
 
