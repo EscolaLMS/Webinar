@@ -225,7 +225,7 @@ class WebinarService implements WebinarServiceContract
         $exclusionStatuses = config('escolalms_webinar.exclusion_reminder_status.' . $reminderStatus, []);
         $data = [
             'date_time_to' => $reminderDate,
-            'date_time_from' => $now,
+            'date_time_to_lower_than' => now(),
             'reminder_status' => $exclusionStatuses,
         ];
         $incomingTerms = $this->webinarRepositoryContract->getIncomingTerm(

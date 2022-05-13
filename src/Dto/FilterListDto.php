@@ -19,6 +19,7 @@ class FilterListDto extends BaseDto
     private string $dateTo;
     private string $dateFrom;
     private string $dateTimeTo;
+    private string $dateTimeToLowerThan;
     private string $dateTimeFrom;
     private array $tags;
 
@@ -44,6 +45,9 @@ class FilterListDto extends BaseDto
         }
         if ($dto->getDateTimeTo()) {
             $dto->addToCriteria(new WhereCriterion($dto->model()->getTable() . '.active_to', $dto->getDateTimeTo(), '<='));
+        }
+        if ($dto->getDateTimeToLowerThan()) {
+            $dto->addToCriteria(new WhereCriterion($dto->model()->getTable() . '.active_to', $dto->getDateTimeToLowerThan(), '>='));
         }
         if ($dto->getTags()) {
             $dto->addToCriteria(new WebinarTagsCriterion($dto->getTags()));
@@ -94,6 +98,11 @@ class FilterListDto extends BaseDto
         return $this->dateTimeTo ?? null;
     }
 
+    public function getDateTimeToLowerThan(): ?string
+    {
+        return $this->dateTimeToLowerThan ?? null;
+    }
+
     public function getReminderStatus(): ?array
     {
         return $this->reminderStatus ?? null;
@@ -137,6 +146,11 @@ class FilterListDto extends BaseDto
     protected function setDateTimeTo(string $dateTimeTo): void
     {
         $this->dateTimeTo = $dateTimeTo;
+    }
+
+    protected function setDateTimeToLowerThan(string $dateTimeToLowerThan): void
+    {
+        $this->dateTimeToLowerThan = $dateTimeToLowerThan;
     }
 
     private function addToCriteria($value): void
