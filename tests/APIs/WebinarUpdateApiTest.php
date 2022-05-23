@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
 use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
 use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class WebinarUpdateApiTest extends TestCase
@@ -144,5 +146,30 @@ class WebinarUpdateApiTest extends TestCase
             $webinarUpdate->toArray()
         );
         $response->assertNotFound();
+    }
+
+    public function testWebinarUpdateImageFromReusableFile(): void
+    {
+        Storage::fake();
+        $directoryPath = ConstantEnum::DIRECTORY . "/{$this->webinar->getKey()}/images";
+        UploadedFile::fake()->image('image.jpg')->storeAs($directoryPath, 'image-test.jpg');
+        UploadedFile::fake()->image('logotype.jpg')->storeAs($directoryPath, 'logotype-test.jpg');
+
+        $imagePath = "{$directoryPath}/image-test.jpg";
+        $logotypePath = "{$directoryPath}/logotype-test.jpg";
+
+        $ytLiveDtoMock = new YTLiveDtoMock();
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
+        $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
+
+        $response = $this->actingAs($this->user, 'api')->postJson($this->apiUrl, [
+            'image' => $imagePath,
+            'logotype' => $logotypePath,
+        ])->assertOk();
+
+        $data = $response->getData()->data;
+        Storage::assertExists($data->image_path);
+        Storage::assertExists($data->logotype_path);
     }
 }
