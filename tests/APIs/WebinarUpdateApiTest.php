@@ -148,7 +148,7 @@ class WebinarUpdateApiTest extends TestCase
         $response->assertNotFound();
     }
 
-    public function testWebinarUpdateImageFromReusableFile(): void
+    public function testWebinarUpdateImageAndLogotypeFromExistingFiles(): void
     {
         Storage::fake();
         $directoryPath = ConstantEnum::DIRECTORY . "/{$this->webinar->getKey()}/images";
