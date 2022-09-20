@@ -12,7 +12,8 @@
     "laravel/framework": "^8.0|^9.0",
     "escolalms/cart": "^0",
     "escolalms/tags": "^0",
-    "escolalms/youtube": "^0"
+    "escolalms/youtube": "^0",
+    "escolalms/files": "^0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0",

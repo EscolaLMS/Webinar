@@ -48,12 +48,12 @@ class WebinarDto extends BaseDto implements ModelDtoContract
         return false;
     }
 
-    protected function setImage(UploadedFile $file): void
+    protected function setImage($file): void
     {
         $this->files['image_path'] = $file;
     }
 
-    protected function setLogotype(UploadedFile $logotype): void
+    protected function setLogotype($logotype): void
     {
         $this->files['logotype_path'] = $logotype;
     }

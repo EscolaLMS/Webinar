@@ -5,9 +5,11 @@ namespace EscolaLms\Webinar\Services;
 use Carbon\Carbon;
 use EscolaLms\Core\Models\User;
 use EscolaLms\Jitsi\Helpers\StringHelper;
+use EscolaLms\Files\Helpers\FileHelper;
 use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
+use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Events\ReminderAboutTerm;
 use EscolaLms\Webinar\Helpers\StrategyHelper;
 use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
@@ -123,7 +125,7 @@ class WebinarService implements WebinarServiceContract
     public function setFiles(Webinar $webinar, array $files = []): void
     {
         foreach ($files as $key => $file) {
-            $webinar->$key = $file->storePublicly("webinar/{$webinar->getKey()}/images");
+            $webinar->$key = FileHelper::getFilePath($file, ConstantEnum::DIRECTORY . "/{$webinar->getKey()}/images");
         }
     }
 
