@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Jitsi\Helpers\StringHelper;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Models\Webinar;
@@ -56,7 +57,7 @@ class WebinarGenerateJitsiTest extends TestCase
                                 ->where('displayName', "{$this->user->first_name} {$this->user->last_name}")
                                 ->where('email', $this->user->email)
                         )
-                        ->where('roomName', lcfirst(Str::studly($this->webinar->name)))
+                        ->where('roomName', StringHelper::convertToJitsiSlug($this->webinar->name))
                         ->etc()
                     )
                     ->where('yt_url',  $this->webinar->yt_url)

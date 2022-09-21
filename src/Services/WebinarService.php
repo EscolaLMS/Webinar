@@ -4,6 +4,7 @@ namespace EscolaLms\Webinar\Services;
 
 use Carbon\Carbon;
 use EscolaLms\Core\Models\User;
+use EscolaLms\Jitsi\Helpers\StringHelper;
 use EscolaLms\Files\Helpers\FileHelper;
 use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
@@ -154,7 +155,7 @@ class WebinarService implements WebinarServiceContract
         }
         return array_merge($this->jitsiServiceContract->getChannelData(
             auth()->user(),
-            Str::studly($webinar->name),
+            StringHelper::convertToJitsiSlug($webinar->name),
             $isModerator,
             $configOverwrite,
             $configInterface
