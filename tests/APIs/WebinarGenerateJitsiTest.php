@@ -57,7 +57,7 @@ class WebinarGenerateJitsiTest extends TestCase
                                 ->where('displayName', "{$this->user->first_name} {$this->user->last_name}")
                                 ->where('email', $this->user->email)
                         )
-                        ->where('roomName', StringHelper::convertToJitsiSlug($this->webinar->name)))
+                        ->where('roomName', StringHelper::convertToJitsiSlug($this->webinar->name))
                         ->etc()
                     )
                     ->where('yt_url',  $this->webinar->yt_url)
