@@ -225,6 +225,16 @@ interface WebinarAPISwagger
      *          ),
      *      ),
      *      @OA\Parameter(
+     *          name="paginate",
+     *          description="If true, list convert to paginate",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="boolean",
+     *              default=false,
+     *          ),
+     *      ),
+     *      @OA\Parameter(
      *          name="page",
      *          description="Pagination Page Number",
      *          required=false,
