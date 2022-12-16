@@ -47,9 +47,15 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
     public function forCurrentUser(ListWebinarsRequest $listWebinarsRequest): JsonResponse
     {
         $search = $listWebinarsRequest->except(['limit', 'skip', 'order', 'order_by']);
-        $webinars = $this->webinarServiceContract
-            ->getWebinarsListForCurrentUser($search)
-            ->get();
+        $webinars = $this->webinarServiceContract->getWebinarsListForCurrentUser($search);
+        if ($listWebinarsRequest->input('paginate', false)) {
+            $webinars = $webinars->paginate(
+                $listWebinarsRequest->get('per_page') ??
+                config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
+            );
+        } else {
+            $webinars = $webinars->get();
+        }
 
         return $this->sendResponseForResource(
             $this->webinarServiceContract->extendResponse(WebinarSimpleResource::collection($webinars), true),
