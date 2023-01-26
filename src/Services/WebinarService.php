@@ -338,13 +338,14 @@ class WebinarService implements WebinarServiceContract
         $modifyTimeStrings = [
             'seconds', 'second', 'minutes', 'minute', 'hours', 'hour', 'weeks', 'week', 'years', 'year'
         ];
-        if (!$webinar->getDuration()) {
-            return null;
+        if ($webinar->getDuration()) {
+            $explode = explode(' ', $webinar->getDuration());
+            $count = $explode[0] ?? 0;
+            $string = $explode[1] ?? 'hours';
+            $string = in_array($string, $modifyTimeStrings) ? $string : 'hours';
+            return Carbon::make($webinar->active_to)->modify('+' . ((int)$count) . ' ' . $string);
         }
-        $explode = explode(' ', $webinar->getDuration());
-        $count = $explode[0] ?? 0;
-        $string = $explode[1] ?? 'hours';
-        $string = in_array($string, $modifyTimeStrings) ? $string : 'hours';
-        return Carbon::make($webinar->active_to)->modify('+' . ((int)$count) . ' ' . $string);
+
+        return $webinar->active_to ? Carbon::make($webinar->active_to) : null;
     }
 }
