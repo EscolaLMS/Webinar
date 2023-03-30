@@ -508,6 +508,34 @@
                     }
                 ]
             }
+        },
+        "/api/admin/webinars/users/assignable": {
+            "get": {
+                "tags": [
+                    "Admin Webinars"
+                ],
+                "description": "Get users assignable to webinars",
+                "operationId": "6a40edecffd7912e1f2ca78cde4c9cd2",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -652,6 +680,32 @@
                 "xml": {
                     "name": "Group"
                 }
+            },
+            "pre-user": {
+                "required": [
+                    "email",
+                    "first_name",
+                    "last_name"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "email": {
+                        "description": "email",
+                        "type": "string"
+                    },
+                    "first_name": {
+                        "description": "first_name",
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "description": "last_name",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             },
             "User": {
                 "title": "User",
