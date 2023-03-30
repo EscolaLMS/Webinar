@@ -4,6 +4,7 @@ namespace EscolaLms\Webinar\Http\Controllers\Swagger;
 use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
+use EscolaLms\Webinar\Http\Requests\WebinarAssignableUserListRequest;
 use Illuminate\Http\JsonResponse;
 
 interface WebinarSwagger
@@ -276,4 +277,30 @@ interface WebinarSwagger
      * )
      */
     public function destroy(int $id): JsonResponse;
+
+    /**
+     * @OA\Get(
+     *      tags={"Admin Webinars"},
+     *      path="/api/admin/webinars/users/assignable",
+     *      description="Get users assignable to webinars",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Bad request",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      )
+     *   )
+     */
+    public function assignableUsers(WebinarAssignableUserListRequest $request): JsonResponse;
 }

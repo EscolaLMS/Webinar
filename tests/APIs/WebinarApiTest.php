@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 class WebinarApiTest extends TestCase
 {
+    use CreatesUsers;
     use DatabaseTransactions;
     private Webinar $webinar;
 
@@ -98,5 +100,35 @@ class WebinarApiTest extends TestCase
         $this->response = $this->actingAs($this->user, 'api')->get('/api/webinars');
         $this->response->assertStatus(400);
         $this->response->assertJsonFragment(['code' => 400,]);
+    }
+
+    public function testWebinarAssignableUsersUnauthorized(): void
+    {
+        $this->response = $this
+            ->json('GET', '/api/admin/webinars/users/assignable')
+            ->assertUnauthorized();
+    }
+
+    public function testWebinarAssignableUsers(): void
+    {
+        $admin = $this->makeAdmin();
+        $student = $this->makeStudent();
+        $this->response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/webinars/users/assignable')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonMissing([
+                'id' => $student->getKey(),
+                'email' => $student->email,
+            ])
+            ->assertJsonFragment([
+                'id' => $admin->getKey(),
+                'email' => $admin->email,
+            ])
+            ->assertJsonFragment([
+                'id' => $this->user->getKey(),
+                'email' => $this->user->email,
+            ]);
     }
 }

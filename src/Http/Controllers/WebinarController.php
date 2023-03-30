@@ -2,6 +2,9 @@
 
 namespace EscolaLms\Webinar\Http\Controllers;
 
+use EscolaLms\Auth\Http\Resources\UserFullResource;
+use EscolaLms\Auth\Services\Contracts\UserServiceContract;
+use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
 use EscolaLms\Webinar\Dto\WebinarDto;
@@ -9,6 +12,7 @@ use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Http\Controllers\Swagger\WebinarSwagger;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
+use EscolaLms\Webinar\Http\Requests\WebinarAssignableUserListRequest;
 use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Http\JsonResponse;
@@ -16,11 +20,14 @@ use Illuminate\Http\JsonResponse;
 class WebinarController extends EscolaLmsBaseController implements WebinarSwagger
 {
     private WebinarServiceContract $webinarServiceContract;
+    private UserServiceContract $userService;
 
     public function __construct(
-        WebinarServiceContract $webinarServiceContract
+        WebinarServiceContract $webinarServiceContract,
+        UserServiceContract $userService
     ) {
         $this->webinarServiceContract = $webinarServiceContract;
+        $this->userService = $userService;
     }
 
     public function index(ListWebinarsRequest $listWebinarsRequest): JsonResponse
@@ -72,5 +79,12 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
     {
         $this->webinarServiceContract->delete($id);
         return $this->sendSuccess(__('Webinar deleted successfully'));
+    }
+
+    public function assignableUsers(WebinarAssignableUserListRequest $request): JsonResponse
+    {
+        $result = $this->userService
+            ->assignableUsers(WebinarPermissionsEnum::WEBINAR_CREATE, $request->get('per_page'), $request->get('page'));
+        return $this->sendResponseForResource(UserFullResource::collection($result), __('Users assignable to webinar'));
     }
 }
