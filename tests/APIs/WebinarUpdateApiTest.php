@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
 use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
@@ -97,6 +98,44 @@ class WebinarUpdateApiTest extends TestCase
                 )
                 ->etc()
             )
+            ->etc()
+        );
+    }
+
+    public function testWebinarClearTagsUpdate(): void
+    {
+        $this->webinar->tags()->save(new Tag(['title' => 'Event']));
+        $this->webinar->tags()->save(new Tag(['title' => 'Webinar']));
+        $webinarUpdate = Webinar::factory()->make()->toArray();
+        $requestArray = array_merge(
+            $webinarUpdate,
+            ['tags' => []],
+        );
+        $ytLiveDtoMock = new YTLiveDtoMock();
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
+        $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
+
+        $response = $this->actingAs($this->user, 'api')->json(
+            'POST',
+            $this->apiUrl,
+            $requestArray
+        );
+
+        $response->assertOk();
+        $response->assertJsonFragment([
+            'id' => $this->webinar->getKey(),
+            'name' => $webinarUpdate['name'],
+            'status' => $webinarUpdate['status'],
+        ]);
+        $response->assertJsonFragment(['success' => true]);
+        $response->assertJson(fn (AssertableJson $json) => $json->has(
+            'data',
+            fn ($json) => $json
+                ->has('image_path')
+                ->has('tags', 0)
+                    ->etc()
+                )
             ->etc()
         );
     }
