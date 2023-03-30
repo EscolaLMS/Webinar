@@ -18,8 +18,15 @@ class WebinarWithTagsStrategy implements RelationStrategyContract
 
     public function setRelation(): void
     {
-        foreach ($this->data['tags'] as $tag) {
-            $this->webinar->tags()->save(new Tag(['title' => $tag]));
+        if (count($this->data['tags']) === 0) {
+            $this->webinar->tags()->delete();
+        } else {
+            $this->webinar->tags()
+                ->whereNotIn('title', $this->data['tags'])
+                ->delete();
+            foreach ($this->data['tags'] as $tag) {
+                $this->webinar->tags()->save(new Tag(['title' => $tag]));
+            }
         }
     }
 }

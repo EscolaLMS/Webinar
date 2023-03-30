@@ -35,6 +35,8 @@ class UpdateWebinarRequest extends FormRequest
             'logotype' => [new FileOrStringRule(['image'], $prefixPath)],
             'trainers' => ['array'],
             'trainers.*' => ['integer', 'exists:users,id'],
+            'tags' => ['array'],
+            'tags.*' => ['string'],
         ];
     }
 }
