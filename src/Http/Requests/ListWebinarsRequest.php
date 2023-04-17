@@ -2,8 +2,6 @@
 
 namespace EscolaLms\Webinar\Http\Requests;
 
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
-use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -20,6 +18,8 @@ class ListWebinarsRequest extends FormRequest
             'name' => ['string'],
             'status' => ['array'],
             'status.*' => ['string'],
+            'order_by' => ['string', 'in:id,name,status,duration,active_from,active_to'],
+            'order' => ['string', 'in:ASC,DESC'],
         ];
     }
 }

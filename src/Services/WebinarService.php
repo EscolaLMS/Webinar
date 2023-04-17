@@ -3,9 +3,10 @@
 namespace EscolaLms\Webinar\Services;
 
 use Carbon\Carbon;
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Models\User;
-use EscolaLms\Jitsi\Helpers\StringHelper;
 use EscolaLms\Files\Helpers\FileHelper;
+use EscolaLms\Jitsi\Helpers\StringHelper;
 use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
@@ -23,7 +24,6 @@ use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebinarService implements WebinarServiceContract
@@ -34,15 +34,16 @@ class WebinarService implements WebinarServiceContract
 
     public function __construct(
         WebinarRepositoryContract $webinarRepositoryContract,
-        JitsiServiceContract $jitsiServiceContract,
-        YoutubeServiceContract $youtubeServiceContract
-    ) {
+        JitsiServiceContract      $jitsiServiceContract,
+        YoutubeServiceContract    $youtubeServiceContract
+    )
+    {
         $this->webinarRepositoryContract = $webinarRepositoryContract;
         $this->jitsiServiceContract = $jitsiServiceContract;
         $this->youtubeServiceContract = $youtubeServiceContract;
     }
 
-    public function getWebinarsList(array $search = [], bool $onlyActive = false): Builder
+    public function getWebinarsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder
     {
         if ($onlyActive) {
             $now = now()->format('Y-m-d');
@@ -50,15 +51,17 @@ class WebinarService implements WebinarServiceContract
             $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from'])->format('Y-m-d') : $now;
         }
         $criteria = FilterListDto::prepareFilters($search);
-        return $this->webinarRepositoryContract->allQueryBuilder(
-            $search,
-            $criteria
-        );
+
+        return $this->webinarRepositoryContract
+            ->allQueryBuilder(
+                $search,
+                $criteria
+            )->orderBy($orderDto?->getOrderBy() ?? 'created_at', $orderDto?->getOrder() ?? 'desc');
     }
 
     public function store(WebinarDto $webinarDto): Webinar
     {
-        return DB::transaction(function () use($webinarDto) {
+        return DB::transaction(function () use ($webinarDto) {
             $webinar = $this->webinarRepositoryContract->create($webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
             $this->setFiles($webinar, $webinarDto->getFiles());
@@ -71,7 +74,7 @@ class WebinarService implements WebinarServiceContract
     public function update(int $id, WebinarDto $webinarDto): Webinar
     {
         $webinar = $this->show($id);
-        return DB::transaction(function () use($webinar, $webinarDto) {
+        return DB::transaction(function () use ($webinar, $webinarDto) {
             $this->setFiles($webinar, $webinarDto->getFiles());
             $webinar = $this->webinarRepositoryContract->updateModel($webinar, $webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
@@ -93,7 +96,7 @@ class WebinarService implements WebinarServiceContract
 
     public function delete(int $id): ?bool
     {
-        return DB::transaction(function () use($id) {
+        return DB::transaction(function () use ($id) {
             $webinar = $this->webinarRepositoryContract->find($id);
             if (!$webinar) {
                 throw new NotFoundHttpException(__('Webinar not found'));
@@ -196,7 +199,7 @@ class WebinarService implements WebinarServiceContract
 
     public function extendResponse($webinarSimpleResource, $isApi = false)
     {
-        WebinarSimpleResource::extend(function (WebinarSimpleResource $webinar) use($isApi) {
+        WebinarSimpleResource::extend(function (WebinarSimpleResource $webinar) use ($isApi) {
             $user = auth()->user();
             $extendedArray = [];
             if (($user && $this->isTrainer($user, $webinar->resource)) || !$isApi) {
@@ -266,7 +269,7 @@ class WebinarService implements WebinarServiceContract
             'event_start_date_time' => $webinar->active_to ? Carbon::make($webinar->active_to)->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s'),
             'event_end_date_time' => $endDate ? $endDate->format('Y-m-d H:i:s') : '',
             'time_zone' => config('timezone', 'UTC'),
-            'privacy_status' => YTStatusesEnum::UNLISTED,				// default: "public" OR "private"
+            'privacy_status' => YTStatusesEnum::UNLISTED,                // default: "public" OR "private"
             'id' => $webinar->yt_id ?? null,
             'autostart_status' => $webinar->yt_autostart_status ?? false,
         ];
