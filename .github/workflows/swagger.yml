@@ -9,7 +9,7 @@ jobs:
   swagger-gh-pages:
     runs-on: ubuntu-latest
     container:
-      image: escolalms/php:8.2
+      image: escolalms/php:8
 
     steps:
       - name: Instantiate package
