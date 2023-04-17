@@ -3,6 +3,7 @@
 namespace EscolaLms\Webinar\Services\Contracts;
 
 use EscolaLms\Auth\Models\User;
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
 use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +12,7 @@ use Illuminate\Support\Collection;
 
 interface WebinarServiceContract
 {
-    public function getWebinarsList(array $search = [], bool $onlyActive = false): Builder;
+    public function getWebinarsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder;
     public function store(WebinarDto $webinarDto): Webinar;
     public function update(int $id, WebinarDto $webinarDto): Webinar;
     public function show(int $id): Webinar;

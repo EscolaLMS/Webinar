@@ -4,6 +4,7 @@ namespace EscolaLms\Webinar\Http\Controllers;
 
 use EscolaLms\Auth\Http\Resources\UserFullResource;
 use EscolaLms\Auth\Services\Contracts\UserServiceContract;
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
@@ -33,8 +34,9 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
     public function index(ListWebinarsRequest $listWebinarsRequest): JsonResponse
     {
         $search = $listWebinarsRequest->except(['limit', 'skip', 'order', 'order_by']);
+        $orderDto = OrderDto::instantiateFromRequest($listWebinarsRequest);
         $webinars = $this->webinarServiceContract
-            ->getWebinarsList($search)
+            ->getWebinarsList($search, false, $orderDto)
             ->paginate(
                 $listWebinarsRequest->get('per_page') ??
                 config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
