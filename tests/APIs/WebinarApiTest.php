@@ -14,6 +14,7 @@ use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Youtube\Services\Contracts\AuthServiceContract;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class WebinarApiTest extends TestCase
 {
@@ -216,12 +217,13 @@ class WebinarApiTest extends TestCase
         $student = $this->makeStudent();
 
         $users = app(UserServiceContract::class)->assignableUsers(WebinarPermissionsEnum::WEBINAR_CREATE);
+        assert($users instanceof LengthAwarePaginator);
 
         $this->response = $this
             ->actingAs($this->user, 'api')
             ->json('GET', '/api/admin/webinars/users/assignable')
             ->assertOk()
-            ->assertJsonCount($users->count(), 'data')
+            ->assertJsonCount(min($users->total(), $users->perPage()), 'data')
             ->assertJsonMissing([
                 'id' => $student->getKey(),
                 'email' => $student->email,
