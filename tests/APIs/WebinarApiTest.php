@@ -2,22 +2,27 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Auth\Models\User;
+use EscolaLms\Auth\Services\Contracts\UserServiceContract;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Youtube\Services\Contracts\AuthServiceContract;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class WebinarApiTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
+
     private Webinar $webinar;
+    private User $user;
 
     protected function setUp(): void
     {
@@ -78,7 +83,7 @@ class WebinarApiTest extends TestCase
             'duration' => 240
         ]);
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'status',
             'order' => 'DESC',
         ]);
@@ -86,7 +91,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $this->webinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $testWebinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'status',
             'order' => 'ASC',
         ]);
@@ -94,7 +99,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $testWebinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $this->webinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'id',
             'order' => 'DESC',
         ]);
@@ -102,7 +107,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $testWebinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $this->webinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'id',
             'order' => 'ASC',
         ]);
@@ -110,7 +115,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $this->webinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $testWebinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'active_from',
             'order' => 'DESC',
         ]);
@@ -118,7 +123,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $testWebinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $this->webinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'active_from',
             'order' => 'ASC',
         ]);
@@ -126,7 +131,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $this->webinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $testWebinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'active_to',
             'order' => 'DESC',
         ]);
@@ -134,7 +139,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $testWebinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $this->webinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'active_to',
             'order' => 'ASC',
         ]);
@@ -142,7 +147,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $this->webinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $testWebinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'duration',
             'order' => 'ASC',
         ]);
@@ -150,7 +155,7 @@ class WebinarApiTest extends TestCase
         $this->assertTrue($this->response->json('data.0.id') === $this->webinar->getKey());
         $this->assertTrue($this->response->json('data.1.id') === $testWebinar->getKey());
 
-        $this->response = $this->actingAs($this->user, 'api')->json('get','/api/admin/webinars', [
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'duration',
             'order' => 'DESC',
         ]);
@@ -158,7 +163,7 @@ class WebinarApiTest extends TestCase
 
     public function testWebinarsListUnauthorized(): void
     {
-        $this->response = $this->json('GET','/api/admin/webinars');
+        $this->response = $this->json('GET', '/api/admin/webinars');
         $this->response->assertUnauthorized();
     }
 
@@ -210,11 +215,15 @@ class WebinarApiTest extends TestCase
     {
         $admin = $this->makeAdmin();
         $student = $this->makeStudent();
+
+        $users = app(UserServiceContract::class)->assignableUsers(WebinarPermissionsEnum::WEBINAR_CREATE);
+        assert($users instanceof LengthAwarePaginator);
+
         $this->response = $this
             ->actingAs($this->user, 'api')
             ->json('GET', '/api/admin/webinars/users/assignable')
             ->assertOk()
-            ->assertJsonCount(2, 'data')
+            ->assertJsonCount(min($users->total(), $users->perPage()), 'data')
             ->assertJsonMissing([
                 'id' => $student->getKey(),
                 'email' => $student->email,
