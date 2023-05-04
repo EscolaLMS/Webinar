@@ -24,7 +24,7 @@ class WebinarSimpleResource extends JsonResource
             'short_desc' => $this->short_desc,
             'agenda' => $this->agenda,
             'duration' => $this->getDuration(),
-            'trainers' => $this->trainers,
+            'trainers' => TrainerResource::collection($this->trainers),
             'image_path' => $this->image_path,
             'image_url' => $this->image_url,
             'logotype_path' => $this->logotype_path,
