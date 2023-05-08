@@ -23,6 +23,8 @@ class FilterListDto extends BaseDto
     private string $dateTimeFrom;
     private array $tags;
 
+    private string $onlyIncoming;
+
     private array $criteria = [];
 
     public static function prepareFilters(array $search)
@@ -54,6 +56,9 @@ class FilterListDto extends BaseDto
         }
         if ($dto->getReminderStatus()) {
             $dto->addToCriteria(new WhereNotInOrIsNullCriterion($dto->model()->getTable() . '.reminder_status', $dto->getReminderStatus()));
+        }
+        if ($dto->getOnlyIncoming()) {
+            $dto->addToCriteria(new WhereCriterion($dto->model()->getTable() . '.active_from', $dto->getOnlyIncoming(), '>'));
         }
         return $dto->criteria;
     }
@@ -151,6 +156,16 @@ class FilterListDto extends BaseDto
     protected function setDateTimeToLowerThan(string $dateTimeToLowerThan): void
     {
         $this->dateTimeToLowerThan = $dateTimeToLowerThan;
+    }
+
+    public function getOnlyIncoming(): ?string
+    {
+        return $this->onlyIncoming ?? null;
+    }
+
+    protected function setOnlyIncoming(string $onlyIncoming): void
+    {
+        $this->onlyIncoming = $onlyIncoming;
     }
 
     private function addToCriteria($value): void

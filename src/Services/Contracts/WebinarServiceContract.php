@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 interface WebinarServiceContract
 {
-    public function getWebinarsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder;
+    public function getWebinarsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null, bool $onlyIncoming = false): Builder;
     public function store(WebinarDto $webinarDto): Webinar;
     public function update(int $id, WebinarDto $webinarDto): Webinar;
     public function show(int $id): Webinar;

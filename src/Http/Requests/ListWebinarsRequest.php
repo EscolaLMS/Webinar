@@ -20,6 +20,7 @@ class ListWebinarsRequest extends FormRequest
             'status.*' => ['string'],
             'order_by' => ['string', 'in:id,name,status,duration,active_from,active_to'],
             'order' => ['string', 'in:ASC,DESC'],
+            'only_incoming' => ['boolean'],
         ];
     }
 }

@@ -43,12 +43,14 @@ class WebinarService implements WebinarServiceContract
         $this->youtubeServiceContract = $youtubeServiceContract;
     }
 
-    public function getWebinarsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder
+    public function getWebinarsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null, bool $onlyIncoming = false): Builder
     {
         if ($onlyActive) {
             $now = now()->format('Y-m-d');
             $search['active_to'] = isset($search['active_to']) ? Carbon::make($search['active_to'])->format('Y-m-d') : $now;
             $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from'])->format('Y-m-d') : $now;
+        } elseif ($onlyIncoming) {
+            $search['only_incoming'] = now()->format('Y-m-d H:i:s');
         }
         $criteria = FilterListDto::prepareFilters($search);
 

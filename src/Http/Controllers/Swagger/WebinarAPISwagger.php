@@ -129,6 +129,15 @@ interface WebinarAPISwagger
      *              type="string",
      *          ),
      *      ),
+     *      @OA\Parameter(
+     *          name="only_incoming",
+     *          description="Get only incoming webinars",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="boolean",
+     *          ),
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
