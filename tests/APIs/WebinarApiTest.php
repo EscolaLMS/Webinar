@@ -194,6 +194,36 @@ class WebinarApiTest extends TestCase
         ]);
     }
 
+    public function testWebinarsListWithFilterOnlyIncomingForApi(): void
+    {
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
+
+        $webinar = Webinar::factory()->create([
+            'name' => 'Incoming webinar',
+            'status' => WebinarStatusEnum::PUBLISHED,
+            'active_from' => today()->addDay(),
+            'active_to' => now()->addDays(2),
+            'duration' => 120
+        ]);
+
+        $this->response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/webinars', ['only_incoming' => true]);
+        $this->response->assertOk();
+        $this->response->assertJsonMissing([
+            'id' => $this->webinar->getKey(),
+            'name' => $this->webinar->name,
+            'active_from' => $this->webinar->active_from,
+        ]);
+        $this->response->assertJsonFragment([
+            'id' => $webinar->getKey(),
+            'name' => $webinar->name,
+            'status' => $webinar->status,
+            'active_from' => $webinar->active_from,
+        ]);
+    }
+
 
     public function testYtUnAuthorizedException(): void
     {
