@@ -115,6 +115,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "only_incoming",
+                        "in": "query",
+                        "description": "Get only incoming webinars",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
                     }
                 ],
                 "responses": {
