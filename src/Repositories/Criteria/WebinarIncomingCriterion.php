@@ -28,7 +28,17 @@ class WebinarIncomingCriterion extends Criterion
                        );
                    }
                    return $query->orWhere(fn (Builder $query) => $query
-                       ->whereRaw("DATE_ADD(active_to, INTERVAL CASE WHEN (duration REGEXP '^[0-9]+$') THEN duration HOURS ELSE duration END) > ?", [$this->value])
+                       ->whereRaw("(
+                       CASE
+                           WHEN SUBSTRING_INDEX(duration, ' ', -1) = 'seconds' or SUBSTRING_INDEX(duration, ' ', -1) = 'second' THEN DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) SECOND )
+                           WHEN SUBSTRING_INDEX(duration, ' ', -1) = 'minutes' or SUBSTRING_INDEX(duration, ' ', -1) = 'minute' THEN DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) MINUTE )
+                           WHEN SUBSTRING_INDEX(duration, ' ', -1) = 'days' or SUBSTRING_INDEX(duration, ' ', -1) = 'day' THEN DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) DAY )
+                           WHEN SUBSTRING_INDEX(duration, ' ', -1) = 'week' or SUBSTRING_INDEX(duration, ' ', -1) = 'weeks' THEN DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) WEEK )
+                           WHEN SUBSTRING_INDEX(duration, ' ', -1) = 'month' or SUBSTRING_INDEX(duration, ' ', -1) = 'months' THEN DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) MONTH )
+                           WHEN SUBSTRING_INDEX(duration, ' ', -1) = 'year' or SUBSTRING_INDEX(duration, ' ', -1) = 'years' THEN DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) YEAR )
+                           ELSE DATE_ADD(active_to, INTERVAL SUBSTRING_INDEX(duration, ' ', 1) HOUR )
+                       END
+                       ) > ?", [$this->value])
                    );
                 });
         }
