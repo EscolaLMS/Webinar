@@ -35,7 +35,7 @@ class WebinarApiTest extends TestCase
         $this->webinar = Webinar::factory()->create([
             'name' => 'A Test webinar',
             'status' => WebinarStatusEnum::PUBLISHED,
-            'active_from' => now()->subDay(),
+            'active_from' => now()->subDays(2),
             'active_to' => now()->addHour(),
             'duration' => 120
         ]);
@@ -199,11 +199,23 @@ class WebinarApiTest extends TestCase
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 
+        $this->webinar->update([
+            'active_to' => today()->subDay(),
+        ]);
+
         $webinar = Webinar::factory()->create([
             'name' => 'Incoming webinar',
             'status' => WebinarStatusEnum::PUBLISHED,
             'active_from' => today()->addDay(),
             'active_to' => now()->addDays(2),
+            'duration' => 120
+        ]);
+
+        $webinar2 = Webinar::factory()->create([
+            'name' => 'Incoming webinar now',
+            'status' => WebinarStatusEnum::PUBLISHED,
+            'active_from' => today()->subDay(),
+            'active_to' => now(),
             'duration' => 120
         ]);
 
@@ -215,6 +227,11 @@ class WebinarApiTest extends TestCase
             'id' => $this->webinar->getKey(),
             'name' => $this->webinar->name,
             'active_from' => $this->webinar->active_from,
+        ]);
+        $this->response->assertJsonMissing([
+            'id' => $webinar2->getKey(),
+            'name' => $webinar2->name,
+            'active_from' => $webinar2->active_from,
         ]);
         $this->response->assertJsonFragment([
             'id' => $webinar->getKey(),
