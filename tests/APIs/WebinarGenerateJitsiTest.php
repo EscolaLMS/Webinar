@@ -40,7 +40,7 @@ class WebinarGenerateJitsiTest extends TestCase
         $webinarService->shouldReceive('getYtLiveStream')->once()->andReturn(collect(['s']));
         $this->webinar = Webinar::factory([
             'status' => WebinarStatusEnum::PUBLISHED,
-            'active_to' => now()->modify('+1 hour'),
+            'active_to' => now(),
             'duration' => '1 hours'
         ])->create();
         $response = $this->actingAs($this->user, 'api')->json(

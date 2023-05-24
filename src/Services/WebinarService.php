@@ -49,8 +49,6 @@ class WebinarService implements WebinarServiceContract
             $now = now()->format('Y-m-d');
             $search['active_to'] = isset($search['active_to']) ? Carbon::make($search['active_to'])->format('Y-m-d') : $now;
             $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from'])->format('Y-m-d') : $now;
-        } elseif ($onlyIncoming) {
-            $search['only_incoming'] = now()->format('Y-m-d H:i:s');
         }
         $criteria = FilterListDto::prepareFilters($search);
 
@@ -189,9 +187,13 @@ class WebinarService implements WebinarServiceContract
 
     public function getWebinarsListForCurrentUser(array $search = []): Builder
     {
-        $now = now()->format('Y-m-d');
-        $search['active_to'] = isset($search['active_to']) ? Carbon::make($search['active_to'])->format('Y-m-d') : $now;
-        $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from']) : $now;
+        if (isset($search['only_incoming'])) {
+            $search['incoming_with_duration'] = true;
+        } else {
+            $now = now()->format('Y-m-d');
+            $search['active_to'] = isset($search['active_to']) ? Carbon::make($search['active_to'])->format('Y-m-d') : $now;
+            $search['active_from'] = isset($search['active_from']) ? Carbon::make($search['active_from']) : $now;
+        }
         $criteria = FilterListDto::prepareFilters($search);
         return $this->webinarRepositoryContract->forCurrentUser(
             $search,
@@ -328,8 +330,10 @@ class WebinarService implements WebinarServiceContract
     {
         $now = now();
         $endDate = $this->getWebinarEndDate($webinar);
+        $activeTo = $webinar->active_to ? Carbon::make($webinar->active_to) : null;
         return $webinar->isPublished() &&
             $endDate &&
+            ($activeTo && $now->getTimestamp() >= $activeTo->getTimestamp()) &&
             $now->getTimestamp() <= $endDate->getTimestamp() &&
             $webinar->hasYT();
     }

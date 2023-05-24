@@ -5,6 +5,7 @@ namespace EscolaLms\Webinar\Dto;
 use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Webinar\Repositories\Criteria\WebinarIncomingCriterion;
 use EscolaLms\Webinar\Repositories\Criteria\WebinarSearch;
 use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
@@ -24,6 +25,7 @@ class FilterListDto extends BaseDto
     private array $tags;
 
     private string $onlyIncoming;
+    private bool $incomingWithDuration;
 
     private array $criteria = [];
 
@@ -58,7 +60,7 @@ class FilterListDto extends BaseDto
             $dto->addToCriteria(new WhereNotInOrIsNullCriterion($dto->model()->getTable() . '.reminder_status', $dto->getReminderStatus()));
         }
         if ($dto->getOnlyIncoming()) {
-            $dto->addToCriteria(new WhereCriterion($dto->model()->getTable() . '.active_from', $dto->getOnlyIncoming(), '>'));
+            $dto->addToCriteria(new WebinarIncomingCriterion(now()->format('Y-m-d H:i:s'), $dto->getIncomingWithDuration()));
         }
         return $dto->criteria;
     }
@@ -166,6 +168,16 @@ class FilterListDto extends BaseDto
     protected function setOnlyIncoming(string $onlyIncoming): void
     {
         $this->onlyIncoming = $onlyIncoming;
+    }
+
+    public function getIncomingWithDuration(): ?bool
+    {
+        return $this->incomingWithDuration ?? null;
+    }
+
+    public function setIncomingWithDuration(bool $incomingWithDuration): void
+    {
+        $this->incomingWithDuration = $incomingWithDuration;
     }
 
     private function addToCriteria($value): void
