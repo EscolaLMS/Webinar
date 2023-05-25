@@ -189,4 +189,10 @@ class Webinar extends Model
     {
         return WebinarFactory::new();
     }
+
+    public function getDeadlineAttribute()
+    {
+        $webinarServiceContract = app(WebinarServiceContract::class);
+        return $webinarServiceContract->getWebinarEndDate($this);
+    }
 }

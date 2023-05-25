@@ -31,6 +31,7 @@ class WebinarSimpleResource extends JsonResource
             'logotype_url' => $this->logotype_url,
             'yt_url' => $this->yt_url,
             'tags' => $this->tags,
+            'deadline' => $this->deadline,
         ];
         return self::apply($fields, $this);
     }
