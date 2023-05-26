@@ -342,7 +342,7 @@ class WebinarService implements WebinarServiceContract
      * @param Webinar $webinar
      * @return Carbon|false|null
      */
-    private function getWebinarEndDate(Webinar $webinar): ?Carbon
+    public function getWebinarEndDate(Webinar $webinar): ?Carbon
     {
         $modifyTimeStrings = [
             'seconds', 'second', 'minutes', 'minute', 'hours', 'hour', 'weeks', 'week', 'years', 'year'

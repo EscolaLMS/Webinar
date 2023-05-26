@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Services\Contracts;
 
+use Carbon\Carbon;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
@@ -63,4 +64,5 @@ interface WebinarServiceContract
     public function extendResponse($webinarSimpleResource, $isApi = false);
     public function isTrainer(User $user, Webinar $webinar): bool;
     public function reminderAboutWebinar(string $reminderStatus): void;
+    public function getWebinarEndDate(Webinar $webinar): ?Carbon;
 }
