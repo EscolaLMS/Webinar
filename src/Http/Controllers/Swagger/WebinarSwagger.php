@@ -286,6 +286,14 @@ interface WebinarSwagger
      *      security={
      *          {"passport": {}},
      *      },
+     *      @OA\Parameter(
+     *          name="search",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",

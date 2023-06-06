@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Auth\Services\Contracts\UserServiceContract;
 use EscolaLms\Core\Tests\CreatesUsers;
@@ -263,7 +264,8 @@ class WebinarApiTest extends TestCase
         $admin = $this->makeAdmin();
         $student = $this->makeStudent();
 
-        $users = app(UserServiceContract::class)->assignableUsers(WebinarPermissionsEnum::WEBINAR_CREATE);
+        $dto = UserAssignableDto::instantiateFromArray(['assignable_by' => WebinarPermissionsEnum::WEBINAR_CREATE]);
+        $users = app(UserServiceContract::class)->assignableUsers($dto);
         assert($users instanceof LengthAwarePaginator);
 
         $this->response = $this
@@ -280,6 +282,37 @@ class WebinarApiTest extends TestCase
                 'email' => $admin->email,
             ])
             ->assertJsonFragment([
+                'id' => $this->user->getKey(),
+                'email' => $this->user->email,
+            ]);
+    }
+
+    public function testWebinarAssignableUsersSearch(): void
+    {
+        $admin = $this->makeAdmin();
+        $student = $this->makeStudent();
+
+        $dto = UserAssignableDto::instantiateFromArray([
+            'assignable_by' => WebinarPermissionsEnum::WEBINAR_CREATE,
+            'search' => $admin->email,
+        ]);
+        $users = app(UserServiceContract::class)->assignableUsers($dto);
+        assert($users instanceof LengthAwarePaginator);
+
+        $this->response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/webinars/users/assignable', ['search' => $admin->email])
+            ->assertOk()
+            ->assertJsonCount(min($users->total(), $users->perPage()), 'data')
+            ->assertJsonFragment([
+                'id' => $admin->getKey(),
+                'email' => $admin->email,
+            ])
+            ->assertJsonMissing([
+                'id' => $student->getKey(),
+                'email' => $student->email,
+            ])
+            ->assertJsonMissing([
                 'id' => $this->user->getKey(),
                 'email' => $this->user->email,
             ]);

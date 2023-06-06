@@ -16,6 +16,8 @@ class WebinarAssignableUserListRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'search' => ['string'],
+        ];
     }
 }

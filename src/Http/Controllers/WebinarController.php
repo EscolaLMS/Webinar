@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Http\Controllers;
 
+use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
 use EscolaLms\Auth\Http\Resources\UserFullResource;
 use EscolaLms\Auth\Services\Contracts\UserServiceContract;
 use EscolaLms\Core\Dtos\OrderDto;
@@ -85,8 +86,9 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
 
     public function assignableUsers(WebinarAssignableUserListRequest $request): JsonResponse
     {
+        $dto = UserAssignableDto::instantiateFromArray(array_merge($request->validated(), ['assignable_by' => WebinarPermissionsEnum::WEBINAR_CREATE]));
         $result = $this->userService
-            ->assignableUsers(WebinarPermissionsEnum::WEBINAR_CREATE, $request->get('per_page'), $request->get('page'));
-        return $this->sendResponseForResource(UserFullResource::collection($result), __('Users assignable to webinar'));
+            ->assignableUsers($dto, $request->get('per_page'), $request->get('page'));
+        return $this->sendResponseForResource(UserFullResource::collection($result), __('Users assignable to courses'));
     }
 }
