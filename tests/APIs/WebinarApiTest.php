@@ -265,7 +265,7 @@ class WebinarApiTest extends TestCase
         $student = $this->makeStudent();
 
         $dto = UserAssignableDto::instantiateFromArray(['assignable_by' => WebinarPermissionsEnum::WEBINAR_CREATE]);
-        $users = app(UserServiceContract::class)->assignableUsers($dto);
+        $users = app(UserServiceContract::class)->assignableUsersWithCriteria($dto);
         assert($users instanceof LengthAwarePaginator);
 
         $this->response = $this
@@ -296,7 +296,7 @@ class WebinarApiTest extends TestCase
             'assignable_by' => WebinarPermissionsEnum::WEBINAR_CREATE,
             'search' => $admin->email,
         ]);
-        $users = app(UserServiceContract::class)->assignableUsers($dto);
+        $users = app(UserServiceContract::class)->assignableUsersWithCriteria($dto);
         assert($users instanceof LengthAwarePaginator);
 
         $this->response = $this
