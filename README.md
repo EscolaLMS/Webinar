@@ -46,25 +46,34 @@ Test details [![codecov](https://codecov.io/gh/EscolaLMS/Webinar/branch/main/gra
 
 - `EscolaLms\Webinar\Listeners\ReminderAboutTermListener` => Listener execute a method that singed the status in the webinar reminder
 
-## How to use this on frontend.
+## How does this work on frontend.
 
-### Admin panel
+```mermaid
+sequenceDiagram
 
-**Left menu**
+    box Embeed in Web App     
+    participant Jisti
+    actor Tutor
+    participant Youtube
+    participant Web App
+    actor Student
+    end
 
-![Menu](docs/menu.png "Menu")
+    box Administration
+    participant Admin Panel
+    actor Admin
+    end 
 
-**List of webinars**
+    Admin->>Admin Panel: Creates a webinar instance
+    Student->>Web App: Get access to webinar (eg. buys)
+    Tutor->>Web App: (on the day of the event) Broadcast 
+    Web App->>Jisti: Broadcast with Jitsu GUI 
+    Jisti->>Youtube: Broadcast to public 
+    Youtube->>Web App: forward for public
+    Student->>Web App: Watches webinar with YT GUI
 
-![List of webinars](docs/list.png "List of webinars")
+```
 
-**Creating/editing webinar**
-
-![Creating/editing webinars](docs/new_webinar.png "Creating or editing webinars")
-
-### Front Application
-
-...
 
 ## Permissions
 
