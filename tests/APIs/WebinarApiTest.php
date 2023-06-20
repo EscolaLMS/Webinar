@@ -195,6 +195,56 @@ class WebinarApiTest extends TestCase
         ]);
     }
 
+    public function testWebinarsListWithOrderForApi(): void
+    {
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
+
+        Webinar::query()->delete();
+
+        $webinar1 = Webinar::factory()->create([
+           'created_at' => now()->subDays(4),
+            'updated_at' => now()->subDays(1),
+        ]);
+
+        $webinar2 = Webinar::factory()->create([
+           'created_at' => now()->subDays(3),
+            'updated_at' => now()->subDays(2),
+        ]);
+
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/webinars', [
+            'order_by' => 'created_at',
+            'order' => 'DESC',
+        ]);
+
+        $this->assertTrue($this->response->json('data.0.id') === $webinar2->getKey());
+        $this->assertTrue($this->response->json('data.1.id') === $webinar1->getKey());
+
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/webinars', [
+            'order_by' => 'created_at',
+            'order' => 'ASC',
+        ]);
+
+        $this->assertTrue($this->response->json('data.0.id') === $webinar1->getKey());
+        $this->assertTrue($this->response->json('data.1.id') === $webinar2->getKey());
+
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/webinars', [
+            'order_by' => 'updated_at',
+            'order' => 'DESC',
+        ]);
+
+        $this->assertTrue($this->response->json('data.0.id') === $webinar1->getKey());
+        $this->assertTrue($this->response->json('data.1.id') === $webinar2->getKey());
+
+        $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/webinars', [
+            'order_by' => 'updated_at',
+            'order' => 'ASC',
+        ]);
+
+        $this->assertTrue($this->response->json('data.0.id') === $webinar2->getKey());
+        $this->assertTrue($this->response->json('data.1.id') === $webinar1->getKey());
+    }
+
     public function testWebinarsListWithFilterOnlyIncomingForApi(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
