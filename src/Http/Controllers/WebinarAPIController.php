@@ -27,7 +27,12 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
         $orderDto = OrderDto::instantiateFromRequest($listWebinarsRequest);
 
         $webinars = $this->webinarServiceContract
-            ->getWebinarsList($search, !$listWebinarsRequest->input('only_incoming'), $orderDto, $listWebinarsRequest->input('only_incoming', false))
+            ->getWebinarsList(
+                $search,
+                !$listWebinarsRequest->input('only_incoming'),
+                $orderDto,
+                $listWebinarsRequest->input('only_incoming', false)
+            )
             ->paginate(
                 $listWebinarsRequest->get('per_page') ??
                 config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
