@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Http\Controllers;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Http\Controllers\Swagger\WebinarAPISwagger;
@@ -23,8 +24,15 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
     public function index(ListWebinarsRequest $listWebinarsRequest): JsonResponse
     {
         $search = $listWebinarsRequest->except(['limit', 'skip', 'order', 'order_by']);
+        $orderDto = OrderDto::instantiateFromRequest($listWebinarsRequest);
+
         $webinars = $this->webinarServiceContract
-            ->getWebinarsList($search, !$listWebinarsRequest->input('only_incoming'), null, $listWebinarsRequest->input('only_incoming', false))
+            ->getWebinarsList(
+                $search,
+                !$listWebinarsRequest->input('only_incoming'),
+                $orderDto,
+                $listWebinarsRequest->input('only_incoming', false)
+            )
             ->paginate(
                 $listWebinarsRequest->get('per_page') ??
                 config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
