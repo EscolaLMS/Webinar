@@ -2,6 +2,7 @@
 
 namespace EscolaLms\Webinar\Tests\APIs;
 
+use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
@@ -22,6 +23,8 @@ class WebinarUpdateApiTest extends TestCase
 {
     use DatabaseTransactions;
     use WithFaker;
+    use CreatesUsers;
+
     private Webinar $webinar;
     private string $apiUrl;
 
@@ -34,6 +37,7 @@ class WebinarUpdateApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
         $this->webinar = Webinar::factory()->create();
+        $this->webinar->trainers()->attach($this->user);
         $this->apiUrl = '/api/admin/webinars/' . $this->webinar->getKey();
     }
 
@@ -154,7 +158,7 @@ class WebinarUpdateApiTest extends TestCase
         $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
 
-        $response = $this->actingAs($this->user, 'api')->json(
+        $response = $this->actingAs($this->makeAdmin(), 'api')->json(
             'POST',
             $this->apiUrl,
             ['trainers' => [$trainer2->getKey()]]

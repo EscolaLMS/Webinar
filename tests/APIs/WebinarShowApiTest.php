@@ -24,6 +24,7 @@ class WebinarShowApiTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('tutor');
         $this->webinar = Webinar::factory()->create();
+        $this->webinar->trainers()->attach($this->user);
         $this->apiUrl = '/api/admin/webinars/' . $this->webinar->getKey();
     }
 

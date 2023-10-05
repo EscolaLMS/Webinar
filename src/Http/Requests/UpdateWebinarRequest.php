@@ -4,7 +4,6 @@ namespace EscolaLms\Webinar\Http\Requests;
 
 use EscolaLms\Files\Rules\FileOrStringRule;
 use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +14,7 @@ class UpdateWebinarRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows(WebinarPermissionsEnum::WEBINAR_UPDATE, Webinar::class);
+        return Gate::allows('update', $this->getWebinar());
     }
 
     public function rules(): array
@@ -38,5 +37,10 @@ class UpdateWebinarRequest extends FormRequest
             'tags' => ['array'],
             'tags.*' => ['string'],
         ];
+    }
+
+    public function getWebinar(): Webinar
+    {
+        return Webinar::findOrFail($this->route('id'));
     }
 }

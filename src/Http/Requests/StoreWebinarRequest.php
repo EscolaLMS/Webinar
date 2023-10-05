@@ -13,7 +13,7 @@ class StoreWebinarRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows(WebinarPermissionsEnum::WEBINAR_CREATE, Webinar::class);
+        return Gate::allows('create', Webinar::class);
     }
 
     public function rules(): array

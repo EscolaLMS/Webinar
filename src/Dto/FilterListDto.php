@@ -2,8 +2,10 @@
 
 namespace EscolaLms\Webinar\Dto;
 
+use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
+use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Models\Webinar;
 use EscolaLms\Webinar\Repositories\Criteria\WebinarIncomingCriterion;
 use EscolaLms\Webinar\Repositories\Criteria\WebinarSearch;
@@ -11,6 +13,7 @@ use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
 use EscolaLms\Webinar\Repositories\Criteria\WebinarTagsCriterion;
+use Illuminate\Database\Eloquent\Builder;
 
 class FilterListDto extends BaseDto
 {
@@ -32,6 +35,8 @@ class FilterListDto extends BaseDto
     public static function prepareFilters(array $search)
     {
         $dto = new self($search);
+        $user = auth()->user();
+
         if ($dto->getName()) {
             $dto->addToCriteria(new WebinarSearch($dto->getName()));
         }
@@ -61,6 +66,11 @@ class FilterListDto extends BaseDto
         }
         if ($dto->getOnlyIncoming()) {
             $dto->addToCriteria(new WebinarIncomingCriterion(now()->format('Y-m-d H:i:s'), $dto->getIncomingWithDuration()));
+        }
+        if ($user && $user->can(WebinarPermissionsEnum::WEBINAR_LIST_OWN) && !$user->can(WebinarPermissionsEnum::WEBINAR_LIST)) {
+            $dto->addToCriteria(new HasCriterion('trainers', function (Builder $query) use ($user) {
+                $query->where('trainer_id', $user->getKey());
+            }));
         }
         return $dto->criteria;
     }

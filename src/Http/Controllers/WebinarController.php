@@ -5,6 +5,8 @@ namespace EscolaLms\Webinar\Http\Controllers;
 use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
 use EscolaLms\Auth\Http\Resources\UserFullResource;
 use EscolaLms\Auth\Services\Contracts\UserServiceContract;
+use EscolaLms\Webinar\Http\Requests\DeleteWebinarRequest;
+use EscolaLms\Webinar\Http\Requests\ShowWebinarRequest;
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
@@ -69,7 +71,7 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
         );
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id, ShowWebinarRequest $request): JsonResponse
     {
         $webinar = $this->webinarServiceContract->show($id);
         return $this->sendResponseForResource(
@@ -78,7 +80,7 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
         );
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id, DeleteWebinarRequest $request): JsonResponse
     {
         $this->webinarServiceContract->delete($id);
         return $this->sendSuccess(__('Webinar deleted successfully'));
