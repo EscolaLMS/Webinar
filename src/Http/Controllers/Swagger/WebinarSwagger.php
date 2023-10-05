@@ -1,6 +1,8 @@
 <?php
 namespace EscolaLms\Webinar\Http\Controllers\Swagger;
 
+use EscolaLms\Webinar\Http\Requests\DeleteWebinarRequest;
+use EscolaLms\Webinar\Http\Requests\ShowWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
@@ -181,7 +183,7 @@ interface WebinarSwagger
      *      )
      * )
      */
-    public function show(int $id): JsonResponse;
+    public function show(int $id, ShowWebinarRequest $request): JsonResponse;
 
     /**
      * @OA\Put(
@@ -276,7 +278,7 @@ interface WebinarSwagger
      *      )
      * )
      */
-    public function destroy(int $id): JsonResponse;
+    public function destroy(int $id, DeleteWebinarRequest $request): JsonResponse;
 
     /**
      * @OA\Get(

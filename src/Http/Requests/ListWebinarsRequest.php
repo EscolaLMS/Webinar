@@ -3,7 +3,6 @@
 namespace EscolaLms\Webinar\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class ListWebinarsRequest extends FormRequest
 {

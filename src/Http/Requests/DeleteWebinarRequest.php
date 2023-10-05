@@ -4,10 +4,10 @@ namespace EscolaLms\Webinar\Http\Requests;
 
 use Illuminate\Support\Facades\Gate;
 
-class ShowWebinarRequest extends BaseWebinarRequest
+class DeleteWebinarRequest extends BaseWebinarRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows('read', $this->getWebinar());
+        return Gate::allows('delete', $this->getWebinar());
     }
 }

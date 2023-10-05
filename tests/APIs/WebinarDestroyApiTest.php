@@ -27,6 +27,7 @@ class WebinarDestroyApiTest extends TestCase
     private function initVariable(): void
     {
         $this->webinar = Webinar::factory()->create();
+        $this->webinar->trainers()->sync($this->user);
         $this->apiUrl = '/api/admin/webinars/' . $this->webinar->getKey();
     }
 
@@ -42,7 +43,6 @@ class WebinarDestroyApiTest extends TestCase
         $this->initVariable();
         $webinarService = $this->mock(YoutubeServiceContract::class);
         $webinarService->shouldReceive('getYtLiveStream')->once()->andReturn(collect());
-
         $response = $this->actingAs($this->user, 'api')->json(
             'DELETE',
             $this->apiUrl

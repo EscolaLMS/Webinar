@@ -17,11 +17,9 @@ class WebinarsPermissionSeeder extends Seeder
         $admin = Role::findOrCreate(UserRole::ADMIN, 'api');
         $tutor = Role::findOrCreate(UserRole::TUTOR, 'api');
 
-        Permission::findOrCreate(WebinarPermissionsEnum::WEBINAR_LIST, 'api');
-        Permission::findOrCreate(WebinarPermissionsEnum::WEBINAR_UPDATE, 'api');
-        Permission::findOrCreate(WebinarPermissionsEnum::WEBINAR_DELETE, 'api');
-        Permission::findOrCreate(WebinarPermissionsEnum::WEBINAR_CREATE, 'api');
-        Permission::findOrCreate(WebinarPermissionsEnum::WEBINAR_READ, 'api');
+        foreach (WebinarPermissionsEnum::getValues() as $permission) {
+            Permission::findOrCreate($permission, 'api');
+        }
 
         $admin->givePermissionTo([
             WebinarPermissionsEnum::WEBINAR_LIST,
@@ -30,12 +28,13 @@ class WebinarsPermissionSeeder extends Seeder
             WebinarPermissionsEnum::WEBINAR_CREATE,
             WebinarPermissionsEnum::WEBINAR_READ,
         ]);
+
         $tutor->givePermissionTo([
-            WebinarPermissionsEnum::WEBINAR_LIST,
-            WebinarPermissionsEnum::WEBINAR_UPDATE,
-            WebinarPermissionsEnum::WEBINAR_DELETE,
+            WebinarPermissionsEnum::WEBINAR_LIST_OWN,
+            WebinarPermissionsEnum::WEBINAR_UPDATE_OWN,
+            WebinarPermissionsEnum::WEBINAR_DELETE_OWN,
+            WebinarPermissionsEnum::WEBINAR_READ_OWN,
             WebinarPermissionsEnum::WEBINAR_CREATE,
-            WebinarPermissionsEnum::WEBINAR_READ,
         ]);
     }
 }

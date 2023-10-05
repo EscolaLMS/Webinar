@@ -84,6 +84,8 @@ class WebinarApiTest extends TestCase
             'duration' => 240
         ]);
 
+        $testWebinar->trainers()->sync($this->user);
+
         $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/admin/webinars', [
             'order_by' => 'status',
             'order' => 'DESC',
@@ -206,11 +208,13 @@ class WebinarApiTest extends TestCase
            'created_at' => now()->subDays(4),
             'updated_at' => now()->subDays(1),
         ]);
+        $webinar1->trainers()->sync($this->user);
 
         $webinar2 = Webinar::factory()->create([
            'created_at' => now()->subDays(3),
             'updated_at' => now()->subDays(2),
         ]);
+        $webinar2->trainers()->sync($this->user);
 
         $this->response = $this->actingAs($this->user, 'api')->json('get', '/api/webinars', [
             'order_by' => 'created_at',
@@ -261,6 +265,7 @@ class WebinarApiTest extends TestCase
             'active_to' => now()->addDays(2),
             'duration' => 120
         ]);
+        $webinar->trainers()->sync($this->user);
 
         $webinar2 = Webinar::factory()->create([
             'name' => 'Incoming webinar now',
@@ -269,6 +274,7 @@ class WebinarApiTest extends TestCase
             'active_to' => now(),
             'duration' => 120
         ]);
+        $webinar2->trainers()->sync($this->user);
 
         $this->response = $this
             ->actingAs($this->user, 'api')
@@ -366,5 +372,22 @@ class WebinarApiTest extends TestCase
                 'id' => $this->user->getKey(),
                 'email' => $this->user->email,
             ]);
+    }
+
+    public function testWebinarListOwn(): void
+    {
+        $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect());
+        Webinar::factory()->count(3)->create();
+
+        $this
+            ->actingAs($this->user, 'api')
+            ->getJson('/api/admin/webinars')
+            ->assertJsonCount(1, 'data');
+
+        $this
+            ->actingAs($this->makeAdmin(), 'api')
+            ->getJson('/api/admin/webinars')
+            ->assertJsonCount(4, 'data');
     }
 }
