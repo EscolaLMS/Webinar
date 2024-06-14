@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -108,6 +109,17 @@ use Illuminate\Support\Facades\Storage;
  *      ),
  * )
  *
+ * @property string $status
+ * @property string $logotype_path
+ * @property string $logotype_url
+ * @property string $name
+ * @property string $yt_url
+ * @property string $yt_stream_url
+ * @property string $yt_stream_key
+ * @property ?string $yt_id
+ * @property string $description
+ * @property ?Carbon $active_to
+ * @property string $yt_autostart_status
  */
 class Webinar extends Model
 {

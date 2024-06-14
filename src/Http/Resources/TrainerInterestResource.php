@@ -10,16 +10,16 @@ class TrainerInterestResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'name_with_breadcrumbs' => $this->name_with_breadcrumbs,
-            'slug' => $this->slug,
-            'icon' => $this->icon ? Storage::url($this->icon) : null,
-            'icon_class' => $this->icon_class,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'parent_id' => $this->parent_id,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+            'name_with_breadcrumbs' => $this->resource->name_with_breadcrumbs,
+            'slug' => $this->resource->slug,
+            'icon' => $this->resource->icon ? Storage::url($this->resource->icon) : null,
+            'icon_class' => $this->resource->icon_class,
+            'is_active' => $this->resource->is_active,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
+            'parent_id' => $this->resource->parent_id,
         ];
     }
 }

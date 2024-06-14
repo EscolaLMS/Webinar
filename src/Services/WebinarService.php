@@ -62,6 +62,7 @@ class WebinarService implements WebinarServiceContract
     public function store(WebinarDto $webinarDto): Webinar
     {
         return DB::transaction(function () use ($webinarDto) {
+            /** @var Webinar $webinar */
             $webinar = $this->webinarRepositoryContract->create($webinarDto->toArray());
             $this->setRelations($webinar, $webinarDto->getRelations());
             $this->setFiles($webinar, $webinarDto->getFiles());
@@ -87,6 +88,7 @@ class WebinarService implements WebinarServiceContract
 
     public function show(int $id): Webinar
     {
+        /** @var Webinar|null $webinar */
         $webinar = $this->webinarRepositoryContract->find($id);
         if (!$webinar) {
             throw new NotFoundHttpException(__('Webinar not found'));
@@ -97,6 +99,7 @@ class WebinarService implements WebinarServiceContract
     public function delete(int $id): ?bool
     {
         return DB::transaction(function () use ($id) {
+            /** @var Webinar|null $webinar */
             $webinar = $this->webinarRepositoryContract->find($id);
             if (!$webinar) {
                 throw new NotFoundHttpException(__('Webinar not found'));
@@ -134,6 +137,7 @@ class WebinarService implements WebinarServiceContract
 
     public function generateJitsi(int $webinarId): array
     {
+        /** @var Webinar|null $webinar */
         $webinar = $this->webinarRepositoryContract->find($webinarId);
         if (!$webinar || !$this->canGenerateJitsi($webinar)) {
             throw new NotFoundHttpException(__('Webinar is not available'));
@@ -207,10 +211,10 @@ class WebinarService implements WebinarServiceContract
             $user = auth()->user();
             $extendedArray = [];
             if (($user && $this->isTrainer($user, $webinar->resource)) || !$isApi) {
-                $extendedArray = $webinar->hasYT() ?
+                $extendedArray = $webinar->resource->hasYT() ?
                     [
-                        'yt_stream_url' => $webinar->yt_stream_url,
-                        'yt_stream_key' => $webinar->yt_stream_key,
+                        'yt_stream_url' => $webinar->resource->yt_stream_url,
+                        'yt_stream_key' => $webinar->resource->yt_stream_key,
                     ] : [];
             }
             return array_merge($extendedArray, [
@@ -312,7 +316,7 @@ class WebinarService implements WebinarServiceContract
         return $webinar->active_to ? Carbon::make($webinar->active_to)->getTimestamp() >= $now->getTimestamp() : false;
     }
 
-    private function setYtStreamToWebinar(YTLiveDtoContract $ytLiveDto, Webinar $webinar): void
+    private function setYtStreamToWebinar(?YTLiveDtoContract $ytLiveDto, Webinar $webinar): void
     {
         if ($ytLiveDto) {
             $webinar->yt_id = $ytLiveDto->getId();
@@ -340,7 +344,7 @@ class WebinarService implements WebinarServiceContract
 
     /**
      * @param Webinar $webinar
-     * @return Carbon|false|null
+     * @return Carbon|null
      */
     public function getWebinarEndDate(Webinar $webinar): ?Carbon
     {

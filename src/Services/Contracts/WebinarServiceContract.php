@@ -65,4 +65,6 @@ interface WebinarServiceContract
     public function isTrainer(User $user, Webinar $webinar): bool;
     public function reminderAboutWebinar(string $reminderStatus): void;
     public function getWebinarEndDate(Webinar $webinar): ?Carbon;
+    public function setStatusInLiveStreamInYt(int $webinarId, string $broadcastStatus): void;
+    public function setReminderStatus(Webinar $webinar, string $status): void;
 }
