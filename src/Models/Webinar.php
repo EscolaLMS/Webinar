@@ -119,7 +119,7 @@ use Illuminate\Support\Facades\Storage;
  * @property ?string $yt_id
  * @property string $description
  * @property ?Carbon $active_to
- * @property string $yt_autostart_status
+ * @property bool $yt_autostart_status
  */
 class Webinar extends Model
 {
