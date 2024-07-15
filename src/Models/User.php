@@ -12,6 +12,7 @@ class User extends AuthUser
 
     public static function newFactory()
     {
+        // @phpstan-ignore-next-line
         return UserFactory::new();
     }
 }

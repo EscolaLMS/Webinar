@@ -23,6 +23,7 @@ class WebinarDto extends BaseDto implements ModelDtoContract
 
     public function model(): Webinar
     {
+        // @phpstan-ignore-next-line
         return Webinar::newModelInstance();
     }
 

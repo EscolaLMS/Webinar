@@ -22,7 +22,7 @@ class ReminderAboutTermListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  ReminderAboutTerm  $event
      * @return void
      */
     public function handle(ReminderAboutTerm $event)
