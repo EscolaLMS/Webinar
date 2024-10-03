@@ -3,10 +3,9 @@
 namespace EscolaLms\Webinar\Dto;
 
 use Carbon\Carbon;
-use EscolaLms\Consultations\Enum\ConstantEnum;
 use EscolaLms\Webinar\Dto\Contracts\ModelDtoContract;
+use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Models\Webinar;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 class WebinarDto extends BaseDto implements ModelDtoContract
