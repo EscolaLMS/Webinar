@@ -4,8 +4,9 @@ namespace EscolaLms\Webinar\Dto;
 
 use Carbon\Carbon;
 use EscolaLms\Webinar\Dto\Contracts\ModelDtoContract;
+use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Models\Webinar;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 class WebinarDto extends BaseDto implements ModelDtoContract
 {
@@ -36,7 +37,7 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     public function getImagePath()
     {
         if ($this->imagePath !== false) {
-            return $this->imagePath === null ? '' : $this->imagePath;
+            return $this->imagePath === null ? '' : Str::after($this->imagePath, env('AWS_ACCESS_KEY_ID') . '/');
         }
         return false;
     }
@@ -44,7 +45,11 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     public function getLogotypePath()
     {
         if ($this->logotypePath !== false) {
-            return $this->logotypePath === null ? '' : $this->logotypePath;
+            if ($this->logotypePath) {
+                $logotypePath = Str::after($this->logotypePath, env('AWS_ACCESS_KEY_ID') . '/');
+                return Str::startsWith($logotypePath, ConstantEnum::DIRECTORY) ? $logotypePath : ConstantEnum::DIRECTORY . '/' .$logotypePath;
+            }
+            return '';
         }
         return false;
     }
