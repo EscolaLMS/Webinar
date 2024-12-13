@@ -596,11 +596,13 @@
                     },
                     "active_to": {
                         "description": "active_to",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "active_from": {
                         "description": "active_from",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "image_path": {
                         "description": "image_path",
@@ -620,11 +622,13 @@
                     },
                     "created_at": {
                         "description": "created_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "description": "updated_at",
-                        "type": "datetime"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "yt_url": {
                         "description": "yt_url",
@@ -700,32 +704,6 @@
                     "name": "Group"
                 }
             },
-            "pre-user": {
-                "required": [
-                    "email",
-                    "first_name",
-                    "last_name"
-                ],
-                "properties": {
-                    "id": {
-                        "description": "id",
-                        "type": "integer"
-                    },
-                    "email": {
-                        "description": "email",
-                        "type": "string"
-                    },
-                    "first_name": {
-                        "description": "first_name",
-                        "type": "string"
-                    },
-                    "last_name": {
-                        "description": "last_name",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
             "User": {
                 "title": "User",
                 "description": "User model",
@@ -745,5 +723,15 @@
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Webinars",
+            "description": "Webinars"
+        },
+        {
+            "name": "Admin Webinars",
+            "description": "Admin Webinars"
+        }
+    ]
 }
