@@ -25,7 +25,7 @@ jobs:
         run: COMPOSER_ROOT_VERSION=0.9.9 composer update
 
       - name: Require composer swagger package
-        run: composer require darkaonline/l5-swagger:8.1.0
+        run: composer require darkaonline/l5-swagger
 
       - name: Discover packages
         run: vendor/bin/testbench package:discover --ansi
