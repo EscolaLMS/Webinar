@@ -54,6 +54,7 @@ class WebinarGenerateJitsiTest extends TestCase
                     fn (AssertableJson $json) => $json->has('jwt')
                         ->has('userInfo',
                             fn (AssertableJson $json) => $json
+                                ->where('id', $this->user->id)
                                 ->where('displayName', "{$this->user->first_name} {$this->user->last_name}")
                                 ->where('email', $this->user->email)
                         )
