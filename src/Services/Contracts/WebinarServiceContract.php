@@ -5,6 +5,7 @@ namespace EscolaLms\Webinar\Services\Contracts;
 use Carbon\Carbon;
 use EscolaLms\Auth\Models\User;
 use EscolaLms\Core\Dtos\OrderDto;
+use EscolaLms\Webinar\Dto\GenerateSignedScreenUrlsDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
 use EscolaLms\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
@@ -67,4 +68,5 @@ interface WebinarServiceContract
     public function getWebinarEndDate(Webinar $webinar): ?Carbon;
     public function setStatusInLiveStreamInYt(int $webinarId, string $broadcastStatus): void;
     public function setReminderStatus(Webinar $webinar, string $status): void;
+    public function generateSignedScreenUrls(GenerateSignedScreenUrlsDto $dto): array;
 }

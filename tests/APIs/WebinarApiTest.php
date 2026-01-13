@@ -16,6 +16,7 @@ use EscolaLms\Youtube\Services\Contracts\AuthServiceContract;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class WebinarApiTest extends TestCase
 {
@@ -389,5 +390,57 @@ class WebinarApiTest extends TestCase
             ->actingAs($this->makeAdmin(), 'api')
             ->getJson('/api/admin/webinars')
             ->assertJsonCount(4, 'data');
+    }
+
+    public function testGenerateSignedUrls(): void
+    {
+        config(['filesystems.default' => 's3']);
+
+        Storage::shouldReceive('temporaryUploadUrl')
+            ->withArgs(function ($path, $expiration) {
+                return true;
+            })
+            ->andReturnUsing(function ($path, $expiration) {
+                return [
+                    'upload_url' => "https://example.com/{$path}",
+                ];
+            });
+
+        $this->response = $this->json('POST', '/api/webinars/signed-screen-urls', [
+            'webinar_id' => 1,
+            'user_id' => 1,
+            'executed_at' => now()->format('Y-m-d H:i:s'),
+            'files' => [
+                [
+                    'filename' => now()->format('Y-m-d H:i:s'),
+                ],
+            ],
+        ])
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    [
+                        'filename',
+                        'upload_url',
+                    ]
+                ]
+            ]);
+    }
+
+    public function testGenerateSignedUrlsNotSupported(): void
+    {
+        config(['filesystems.default' => 'local']);
+
+        $this->response = $this->json('POST', '/api/webinars/signed-screen-urls', [
+            'webinar_id' => 1,
+            'user_id' => 1,
+            'executed_at' => now()->format('Y-m-d H:i:s'),
+            'files' => [
+                [
+                    'filename' => now()->format('Y-m-d H:i:s'),
+                ],
+            ],
+        ])
+            ->assertStatus(400);
     }
 }
