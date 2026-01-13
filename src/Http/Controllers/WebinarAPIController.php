@@ -25,7 +25,6 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
 
     public function index(ListWebinarsRequest $listWebinarsRequest): JsonResponse
     {
-        dd('tuda');
         $search = $listWebinarsRequest->except(['limit', 'skip', 'order', 'order_by']);
         $orderDto = OrderDto::instantiateFromRequest($listWebinarsRequest);
 
