@@ -385,7 +385,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarListOwn(): void
     {
         $webinarService = $this->mock(YoutubeServiceContract::class);
-        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(false);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect());
         Webinar::factory()->count(3)->create();
 
