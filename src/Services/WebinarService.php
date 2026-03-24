@@ -25,6 +25,7 @@ use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -384,6 +385,13 @@ class WebinarService implements WebinarServiceContract
 
         return array_map(function ($file) use ($directory) {
             $filename = $file['filename'];
+
+            if (config('cache.default') === 'redis') {
+                $key = 'signed_urls:' . md5($directory . $filename);
+                Redis::command('SETEX', [$key, ConstantEnum::REDIS_IMAGES_TTL, $directory . $filename]);
+                Redis::command('HSET', [ConstantEnum::REDIS_IMAGES_KEY, $key, 1]);
+                Redis::command('EXPIRE', [ConstantEnum::REDIS_IMAGES_KEY, ConstantEnum::REDIS_IMAGES_TTL]);
+            }
 
             return array_merge(
                 ['filename' => $filename],
