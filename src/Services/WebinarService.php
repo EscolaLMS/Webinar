@@ -335,11 +335,14 @@ class WebinarService implements WebinarServiceContract
         $now = now();
         $endDate = $this->getWebinarEndDate($webinar);
         $activeTo = $webinar->active_to ? Carbon::make($webinar->active_to) : null;
-        return $webinar->isPublished() &&
+        $baseConditions = $webinar->isPublished() &&
             $endDate &&
             ($activeTo && $now->getTimestamp() >= $activeTo->getTimestamp()) &&
-            $now->getTimestamp() <= $endDate->getTimestamp() &&
-            $webinar->hasYT();
+            $now->getTimestamp() <= $endDate->getTimestamp();
+
+        $ytConditions = !$this->youtubeServiceContract->isConfigured() || $this->hasYT($webinar);
+
+        return $baseConditions && $ytConditions;
     }
 
     /**
