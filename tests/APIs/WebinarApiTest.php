@@ -56,6 +56,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithFilter(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $filterData = [
             'name=' . $this->webinar->name,
@@ -75,6 +76,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithSorts(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 
         $testWebinar = Webinar::factory()->create([
@@ -182,6 +184,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithFilterForApi(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $filterData = [
             'name=' . $this->webinar->name,
@@ -201,6 +204,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithOrderForApi(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 
         Webinar::query()->delete();
@@ -253,6 +257,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListWithFilterOnlyIncomingForApi(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 
         $this->webinar->update([
