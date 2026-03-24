@@ -48,6 +48,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsList(): void
     {
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect());
         $this->response = $this->actingAs($this->user, 'api')->get('/api/admin/webinars');
         $this->response->assertOk();
@@ -176,6 +177,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarsListForApi(): void
     {
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect());
         $this->response = $this->get('/api/webinars');
         $this->response->assertOk();
@@ -383,6 +385,7 @@ class WebinarApiTest extends TestCase
     public function testWebinarListOwn(): void
     {
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect());
         Webinar::factory()->count(3)->create();
 
