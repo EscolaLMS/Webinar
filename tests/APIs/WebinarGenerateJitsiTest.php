@@ -37,6 +37,7 @@ class WebinarGenerateJitsiTest extends TestCase
     public function testGenerateJitsiWithWebinar(): void
     {
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('getYtLiveStream')->once()->andReturn(collect(['s']));
         $this->webinar = Webinar::factory([
             'status' => WebinarStatusEnum::PUBLISHED,
