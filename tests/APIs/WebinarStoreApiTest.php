@@ -57,6 +57,7 @@ class WebinarStoreApiTest extends TestCase
 
         $ytLiveDtoMock = new YTLiveDtoMock();
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('generateYTStream')->once()->andReturn($ytLiveDtoMock);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 

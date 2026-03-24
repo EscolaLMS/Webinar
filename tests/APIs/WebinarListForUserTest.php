@@ -43,6 +43,7 @@ class WebinarListForUserTest extends TestCase
     public function testWebinarListForUser(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $this->initVariable();
         $this->response = $this->actingAs($this->user, 'api')->json('GET', $this->apiUrl);
@@ -91,6 +92,7 @@ class WebinarListForUserTest extends TestCase
     public function testWebinarListOnlyIncoming(string $duration): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
 
         $student = User::factory()->create();
