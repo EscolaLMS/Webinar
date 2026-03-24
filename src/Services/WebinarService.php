@@ -9,6 +9,7 @@ use EscolaLms\Files\Helpers\FileHelper;
 use EscolaLms\Jitsi\Helpers\StringHelper;
 use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
 use EscolaLms\Webinar\Dto\FilterListDto;
+use EscolaLms\Webinar\Dto\GenerateSignedScreenUrlsDto;
 use EscolaLms\Webinar\Dto\WebinarDto;
 use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Events\ReminderAboutTerm;
@@ -24,6 +25,7 @@ use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebinarService implements WebinarServiceContract
@@ -363,5 +365,30 @@ class WebinarService implements WebinarServiceContract
         }
 
         return $webinar->active_to ? Carbon::make($webinar->active_to) : null;
+    }
+
+    public function generateSignedScreenUrls(GenerateSignedScreenUrlsDto $dto): array
+    {
+        if (config('filesystems.default') !== 's3') {
+            abort(400, 'The file driver does not support this method.');
+        }
+
+        $term = Carbon::make($dto->getExecutedAt());
+        $directory = sprintf(
+            '%s/%s/%s/%s/',
+            ConstantEnum::DIRECTORY,
+            $dto->getWebinarId(),
+            $term->getTimestamp(),
+            $dto->getUserId()
+        );
+
+        return array_map(function ($file) use ($directory) {
+            $filename = $file['filename'];
+
+            return array_merge(
+                ['filename' => $filename],
+                Storage::temporaryUploadUrl($directory . $filename, now()->addMinutes(5))
+            );
+        }, $dto->getFiles());
     }
 }
