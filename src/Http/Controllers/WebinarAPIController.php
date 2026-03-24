@@ -4,8 +4,10 @@ namespace EscolaLms\Webinar\Http\Controllers;
 
 use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use EscolaLms\Webinar\Dto\GenerateSignedScreenUrlsDto;
 use EscolaLms\Webinar\Enum\ConstantEnum;
 use EscolaLms\Webinar\Http\Controllers\Swagger\WebinarAPISwagger;
+use EscolaLms\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
 use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
 use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
@@ -93,5 +95,12 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
          * @param string second param "testing" | "live" | "complete"
          */
         $this->webinarServiceContract->setStatusInLiveStreamInYt($id, 'complete');
+    }
+
+    public function generateSignedScreenUrls(GenerateSignedScreenUrlsRequest $request): JsonResponse
+    {
+        $data = $this->webinarServiceContract->generateSignedScreenUrls(new GenerateSignedScreenUrlsDto($request->validated()));
+
+        return $this->sendResponse($data, __('Urls generated successfully'));
     }
 }
