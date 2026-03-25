@@ -213,7 +213,7 @@ class WebinarService implements WebinarServiceContract
         WebinarSimpleResource::extend(function (WebinarSimpleResource $webinar) use ($isApi) {
             $user = auth()->user();
             $extendedArray = [];
-            if (($user && $this->isTrainer($user, $webinar->resource)) || !$isApi) {
+            if ($this->youtubeServiceContract->isConfigured() && (($user && $this->isTrainer($user, $webinar->resource)) || !$isApi)) {
                 $extendedArray = $webinar->resource->hasYT() ?
                     [
                         'yt_stream_url' => $webinar->resource->yt_stream_url,
@@ -289,6 +289,10 @@ class WebinarService implements WebinarServiceContract
 
     public function hasYT(Webinar $webinar): bool
     {
+        if (!$this->youtubeServiceContract->isConfigured()) {
+            return false;
+        }
+
         try {
             $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
             return $this->youtubeServiceContract->getYtLiveStream($ytBroadcastDto)->count() > 0 &&

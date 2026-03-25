@@ -25,12 +25,19 @@ class WebinarListForUserTest extends TestCase
         parent::setUp();
         $this->seed(WebinarsPermissionSeeder::class);
 
-        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
-        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true)->byDefault();
-        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]))->byDefault();
+        config([
+            'services.youtube.client_id' => null,
+            'services.youtube.client_secret' => null,
+            'services.youtube.api_key' => null,
+            'services.youtube.refresh_token' => null,
+            'services.youtube.redirect_url' => null,
+        ]);
 
         $this->app->forgetInstance(WebinarServiceContract::class);
         $this->app->forgetInstance(WebinarService::class);
+
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(false)->byDefault();
 
         $this->user = User::factory()->create();
         $this->user->guard_name = 'api';
