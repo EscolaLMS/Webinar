@@ -343,9 +343,11 @@ class WebinarService implements WebinarServiceContract
             ($activeTo && $now->getTimestamp() >= $activeTo->getTimestamp()) &&
             $now->getTimestamp() <= $endDate->getTimestamp();
 
-        $ytConditions = !$this->youtubeServiceContract->isConfigured() || $this->hasYT($webinar);
+        if (!$baseConditions) {
+            return false;
+        }
 
-        return $baseConditions && $ytConditions;
+        return !$this->youtubeServiceContract->isConfigured() || $this->hasYT($webinar);
     }
 
     /**
