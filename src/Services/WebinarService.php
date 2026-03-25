@@ -347,7 +347,7 @@ class WebinarService implements WebinarServiceContract
             return false;
         }
 
-        return !$this->youtubeServiceContract->isConfigured() || $this->hasYT($webinar);
+        return !$this->youtubeServiceContract->isConfigured() || $webinar->hasYT();
     }
 
     /**
