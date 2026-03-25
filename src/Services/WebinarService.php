@@ -25,6 +25,7 @@ use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -337,11 +338,16 @@ class WebinarService implements WebinarServiceContract
         $now = now();
         $endDate = $this->getWebinarEndDate($webinar);
         $activeTo = $webinar->active_to ? Carbon::make($webinar->active_to) : null;
-        return $webinar->isPublished() &&
+        $baseConditions = $webinar->isPublished() &&
             $endDate &&
             ($activeTo && $now->getTimestamp() >= $activeTo->getTimestamp()) &&
-            $now->getTimestamp() <= $endDate->getTimestamp() &&
-            $webinar->hasYT();
+            $now->getTimestamp() <= $endDate->getTimestamp();
+
+        if (!$baseConditions) {
+            return false;
+        }
+
+        return !$this->youtubeServiceContract->isConfigured() || $webinar->hasYT();
     }
 
     /**
@@ -381,6 +387,13 @@ class WebinarService implements WebinarServiceContract
 
         return array_map(function ($file) use ($directory) {
             $filename = $file['filename'];
+
+            if (config('cache.default') === 'redis') {
+                $key = 'signed_urls:' . md5($directory . $filename);
+                Redis::command('SETEX', [$key, ConstantEnum::REDIS_IMAGES_TTL, $directory . $filename]);
+                Redis::command('HSET', [ConstantEnum::REDIS_IMAGES_KEY, $key, 1]);
+                Redis::command('EXPIRE', [ConstantEnum::REDIS_IMAGES_KEY, ConstantEnum::REDIS_IMAGES_TTL]);
+            }
 
             return array_merge(
                 ['filename' => $filename],

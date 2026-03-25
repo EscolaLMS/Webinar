@@ -21,6 +21,15 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        config([
+            'services.youtube.client_id' => 'test_client_id',
+            'services.youtube.client_secret' => 'test_secret',
+            'services.youtube.api_key' => 'test_api_key',
+            'services.youtube.refresh_token' => 'test_refresh_token',
+            'services.youtube.redirect_url' => 'redirect_url',
+        ]);
+
         Passport::useClientModel(Client::class);
     }
 

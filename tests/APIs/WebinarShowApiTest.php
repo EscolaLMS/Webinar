@@ -37,6 +37,7 @@ class WebinarShowApiTest extends TestCase
     public function testWebinarShow(): void
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $response = $this->actingAs($this->user, 'api')->json(
             'GET',
@@ -55,6 +56,7 @@ class WebinarShowApiTest extends TestCase
     public function testConsultationShowAPI()
     {
         $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $response = $this->actingAs($this->user, 'api')->json(
             'GET',

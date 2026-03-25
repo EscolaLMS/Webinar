@@ -60,6 +60,7 @@ class WebinarUpdateApiTest extends TestCase
         );
         $ytLiveDtoMock = new YTLiveDtoMock();
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
 
@@ -117,6 +118,7 @@ class WebinarUpdateApiTest extends TestCase
         );
         $ytLiveDtoMock = new YTLiveDtoMock();
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
 
@@ -155,6 +157,7 @@ class WebinarUpdateApiTest extends TestCase
 
         $ytLiveDtoMock = new YTLiveDtoMock();
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
 
@@ -203,6 +206,7 @@ class WebinarUpdateApiTest extends TestCase
 
         $ytLiveDtoMock = new YTLiveDtoMock();
         $webinarService = $this->mock(YoutubeServiceContract::class);
+        $webinarService->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
         $webinarService->shouldReceive('updateYTStream')->zeroOrMoreTimes()->andReturn($ytLiveDtoMock);
         $webinarService->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect(['s']));
 
