@@ -289,6 +289,10 @@ class WebinarService implements WebinarServiceContract
 
     public function hasYT(Webinar $webinar): bool
     {
+        if (!$this->youtubeServiceContract->isConfigured()) {
+            return false;
+        }
+
         try {
             $ytBroadcastDto = $this->prepareYTDtoBroadcast($webinar);
             return $this->youtubeServiceContract->getYtLiveStream($ytBroadcastDto)->count() > 0 &&
