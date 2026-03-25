@@ -6,6 +6,8 @@ use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Models\User;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use EscolaLms\Webinar\Models\Webinar;
+use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use EscolaLms\Webinar\Services\WebinarService;
 use EscolaLms\Webinar\Tests\TestCase;
 use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -22,6 +24,13 @@ class WebinarListForUserTest extends TestCase
     {
         parent::setUp();
         $this->seed(WebinarsPermissionSeeder::class);
+
+        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
+        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true)->byDefault();
+        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]))->byDefault();
+
+        $this->app->forgetInstance(WebinarServiceContract::class);
+        $this->app->forgetInstance(WebinarService::class);
 
         $this->user = User::factory()->create();
         $this->user->guard_name = 'api';
@@ -42,9 +51,6 @@ class WebinarListForUserTest extends TestCase
 
     public function testWebinarListForUser(): void
     {
-        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
-        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
-        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
         $this->initVariable();
         $this->response = $this->actingAs($this->user, 'api')->json('GET', $this->apiUrl);
         $consArray = $this->webinars->pluck('id')->toArray();
@@ -91,10 +97,6 @@ class WebinarListForUserTest extends TestCase
      */
     public function testWebinarListOnlyIncoming(string $duration): void
     {
-        $youtubeServiceContract = $this->mock(YoutubeServiceContract::class);
-        $youtubeServiceContract->shouldReceive('isConfigured')->zeroOrMoreTimes()->andReturn(true);
-        $youtubeServiceContract->shouldReceive('getYtLiveStream')->zeroOrMoreTimes()->andReturn(collect([1]));
-
         $student = User::factory()->create();
         $student->guard_name = 'api';
         $student->assignRole('student');
