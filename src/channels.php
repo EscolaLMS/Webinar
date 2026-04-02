@@ -1,3 +1,6 @@
 <?php
 
-Broadcast::channel('webinar.{webinar}.{term}', ConsultationChannel::class, ['middleware' => 'auth:api']);
+use EscolaLms\Webinar\Broadcasting\WebinarChannel;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('webinar.{webinar}.{term}', WebinarChannel::class, ['middleware' => 'auth:api']);
