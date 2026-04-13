@@ -32,6 +32,7 @@ class WebinarSimpleResource extends JsonResource
             'yt_url' => $this->resource->yt_url,
             'tags' => $this->resource->tags,
             'deadline' => $this->resource->deadline,
+            'analyze_enabled' => $this->resource->analyze_enabled,
         ];
         return self::apply($fields, $this);
     }

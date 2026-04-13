@@ -30,6 +30,7 @@ class StoreWebinarRequest extends FormRequest
             'image' => ['nullable', 'file', 'image'],
             'trainers' => ['array'],
             'trainers.*' => ['integer', 'exists:users,id'],
+            'analyze_enabled' => ['boolean', 'nullable'],
         ];
     }
 }

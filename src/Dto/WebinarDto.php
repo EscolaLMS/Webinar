@@ -19,8 +19,9 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     protected ?string $activeFrom;
     protected ?string $duration;
     protected ?int $basePrice;
-    protected $imagePath = false;
-    protected $logotypePath = false;
+    protected $imagePath = null;
+    protected $logotypePath = null;
+    protected ?bool $analyzeEnabled;
 
     public function model(): Webinar
     {
@@ -82,5 +83,10 @@ class WebinarDto extends BaseDto implements ModelDtoContract
     protected function setActiveFrom(?string $activeFrom): void
     {
         $this->activeFrom = Carbon::make($activeFrom);
+    }
+
+    public function setAnalyzeEnabled(?bool $analyzeEnabled): void
+    {
+        $this->analyzeEnabled = $analyzeEnabled;
     }
 }

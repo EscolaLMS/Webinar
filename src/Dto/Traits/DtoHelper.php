@@ -30,7 +30,7 @@ trait DtoHelper
         if (method_exists($this, 'get' . $key)) {
             return $this->{'get' . $key}();
         }
-        return $this->{lcfirst($key)} ?? false;
+        return $this->{lcfirst($key)} ?? null;
     }
 
     protected function fillInArray(array $fillables): array
@@ -38,7 +38,7 @@ trait DtoHelper
         $result = [];
         foreach ($fillables as $fill) {
             $value = $this->getterByAttribute($fill);
-            if ($value === false) {
+            if ($value === null) {
                 continue;
             }
             $result[$fill] = $value;
