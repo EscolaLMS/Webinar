@@ -7,6 +7,7 @@ use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
 use EscolaLms\Webinar\Http\Requests\WebinarAssignableUserListRequest;
+use EscolaLms\Webinar\Http\Requests\WebinarUserRequest;
 use Illuminate\Http\JsonResponse;
 
 interface WebinarSwagger
@@ -313,4 +314,47 @@ interface WebinarSwagger
      *   )
      */
     public function assignableUsers(WebinarAssignableUserListRequest $request): JsonResponse;
+
+    /**
+     * @OA\Get(
+     *      tags={"Admin Webinars"},
+     *      path="/api/admin/webinars/{id}/users",
+     *      description="Get webinars users",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      @OA\Parameter(
+     *           name="id",
+     *           description="id of Webinar",
+     *           @OA\Schema(
+     *              type="integer",
+     *           ),
+     *           required=true,
+     *           in="path"
+     *       ),
+     *      @OA\Parameter(
+     *          name="search",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Bad request",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      )
+     *   )
+     */
+    public function webinarUsers(int $id, WebinarUserRequest $request): JsonResponse;
 }
