@@ -463,9 +463,11 @@ class WebinarApiTest extends TestCase
     public function testWebinarUsers(): void
     {
         $admin = $this->makeAdmin();
-        $student = $this->makeStudent();
+        $student = config('auth.providers.users.model')::factory()->create();
+        $student->guard_name = 'api';
+        $student->assignRole('student');
 
-        $this->webinar->users()->sync([$student]);
+        $this->webinar->users()->sync($student);
 
         $dto = WebinarUserDto::instantiateFromArray(['webinar_id' => $this->webinar->getKey()]);
         $users = app(UserServiceContract::class)->assignableUsersWithCriteria($dto);
