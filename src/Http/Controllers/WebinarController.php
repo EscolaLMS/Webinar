@@ -5,6 +5,7 @@ namespace EscolaLms\Webinar\Http\Controllers;
 use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
 use EscolaLms\Auth\Http\Resources\UserFullResource;
 use EscolaLms\Auth\Services\Contracts\UserServiceContract;
+use EscolaLms\Webinar\Dto\WebinarUserDto;
 use EscolaLms\Webinar\Http\Requests\DeleteWebinarRequest;
 use EscolaLms\Webinar\Http\Requests\ShowWebinarRequest;
 use EscolaLms\Core\Dtos\OrderDto;
@@ -17,6 +18,7 @@ use EscolaLms\Webinar\Http\Controllers\Swagger\WebinarSwagger;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
 use EscolaLms\Webinar\Http\Requests\WebinarAssignableUserListRequest;
+use EscolaLms\Webinar\Http\Requests\WebinarUserRequest;
 use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
 use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Http\JsonResponse;
@@ -92,5 +94,13 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
         $result = $this->userService
             ->assignableUsersWithCriteria($dto, $request->get('per_page'), $request->get('page'));
         return $this->sendResponseForResource(UserFullResource::collection($result), __('Users assignable to courses'));
+    }
+
+    public function webinarUsers(int $id, WebinarUserRequest $request): JsonResponse
+    {
+        $dto = WebinarUserDto::instantiateFromArray(array_merge($request->validated(), ['webinar_id' => $id]));
+        $result = $this->userService
+            ->assignableUsersWithCriteria($dto, $request->get('per_page'), $request->get('page'));
+        return $this->sendResponseForResource(UserFullResource::collection($result), __('Webinar Users retrieved successfully'));
     }
 }

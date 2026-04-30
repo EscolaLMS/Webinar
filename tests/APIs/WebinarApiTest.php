@@ -8,6 +8,7 @@ use EscolaLms\Auth\Services\Contracts\UserServiceContract;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Tags\Models\Tag;
 use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use EscolaLms\Webinar\Dto\WebinarUserDto;
 use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
 use EscolaLms\Webinar\Enum\WebinarStatusEnum;
 use EscolaLms\Webinar\Models\Webinar;
@@ -450,5 +451,44 @@ class WebinarApiTest extends TestCase
             ],
         ])
             ->assertStatus(400);
+    }
+
+    public function testWebinarUsersUnauthorized(): void
+    {
+        $this->response = $this
+            ->json('GET', "/api/admin/webinars/{$this->webinar->getKey()}/users")
+            ->assertUnauthorized();
+    }
+
+    public function testWebinarUsers(): void
+    {
+        $admin = $this->makeAdmin();
+        $student = config('auth.providers.users.model')::factory()->create();
+        $student->guard_name = 'api';
+        $student->assignRole('student');
+
+        $this->webinar->users()->sync($student);
+
+        $dto = WebinarUserDto::instantiateFromArray(['webinar_id' => $this->webinar->getKey()]);
+        $users = app(UserServiceContract::class)->assignableUsersWithCriteria($dto);
+        assert($users instanceof LengthAwarePaginator);
+
+        $this->response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', "/api/admin/webinars/{$this->webinar->getKey()}/users")
+            ->assertOk()
+            ->assertJsonCount(min($users->total(), $users->perPage()), 'data')
+            ->assertJsonFragment([
+                'id' => $student->getKey(),
+                'email' => $student->email,
+            ])
+            ->assertJsonMissing([
+                'id' => $admin->getKey(),
+                'email' => $admin->email,
+            ])
+            ->assertJsonMissing([
+                'id' => $this->user->getKey(),
+                'email' => $this->user->email,
+            ]);
     }
 }

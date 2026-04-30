@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 // admin endpoints
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {
     Route::post('webinars/{id}', [WebinarController::class, 'update']);
+    Route::get('webinars/{id}/users', [WebinarController::class, 'webinarUsers']);
     Route::resource('webinars', WebinarController::class);
     Route::get('webinars/users/assignable', [WebinarController::class, 'assignableUsers']);
 });
