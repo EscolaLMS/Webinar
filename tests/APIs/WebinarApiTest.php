@@ -478,7 +478,7 @@ class WebinarApiTest extends TestCase
             ->json('GET', "/api/admin/webinars/{$this->webinar->getKey()}/users")
             ->assertOk()
             ->assertJsonCount(min($users->total(), $users->perPage()), 'data')
-            ->assertJson([
+            ->assertJsonFragment([
                 'id' => $student->getKey(),
                 'email' => $student->email,
             ])
