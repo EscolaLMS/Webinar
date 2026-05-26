@@ -98,9 +98,10 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
 
     public function webinarUsers(int $id, WebinarUserRequest $request): JsonResponse
     {
-        $dto = WebinarUserDto::instantiateFromArray(array_merge($request->validated(), ['webinar_id' => $id]));
+        $dto = WebinarUserDto::instantiateFromArray(array_merge($request->except(['limit', 'skip', 'order', 'order_by']), ['webinar_id' => $id]));
+        $orderDto = OrderDto::instantiateFromRequest($request);
         $result = $this->userService
-            ->assignableUsersWithCriteria($dto, $request->get('per_page'), $request->get('page'));
+            ->assignableUsersWithCriteria($dto, $request->get('per_page'), $request->get('page'), $orderDto);
         return $this->sendResponseForResource(UserFullResource::collection($result), __('Webinar Users retrieved successfully'));
     }
 }
