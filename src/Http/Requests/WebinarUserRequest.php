@@ -18,6 +18,8 @@ class WebinarUserRequest extends FormRequest
     {
         return [
             'search' => ['string'],
+            'order_by' => ['string', 'in:id,first_name,last_name,email,created_at'],
+            'order' => ['string'],
         ];
     }
 }
